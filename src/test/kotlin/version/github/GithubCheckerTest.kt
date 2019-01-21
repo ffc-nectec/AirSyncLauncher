@@ -1,10 +1,9 @@
 package version.github
 
 import org.junit.Ignore
-import version.CheckVersionFromGit
 
 class GithubCheckerTest {
-    val getTag: CheckVersionFromGit = GithubChecker("ffc-nectec/airsync")
+    val getTag: GetLastTag = GithubGetLastTag("ffc-nectec/airsync")
     @Ignore("Real test.")
     fun getLastRelease() {
 
