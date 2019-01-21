@@ -18,7 +18,8 @@ data class GithubRelease(
     val prerelease: Boolean,
     val created_at: DateTime,
     val published_at: DateTime,
-    val assets: List<Assets>
+    val assets: List<Assets>,
+    val body: String
 )
 
 data class Assets(
