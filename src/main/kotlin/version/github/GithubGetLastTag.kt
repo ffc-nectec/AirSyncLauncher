@@ -5,9 +5,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import version.CheckVersionFromGit
 
-class GithubChecker(val repoName: String) : CheckVersionFromGit {
+class GithubGetLastTag(val repoName: String) : GetLastTag {
     private val urlPattern = Regex("""^.*a href="(.*)">redirected.*$""")
     private val tagPattern = Regex("""^.*tag/(.*)$""")
     private val retrofit = Retrofit.Builder()
@@ -16,7 +15,7 @@ class GithubChecker(val repoName: String) : CheckVersionFromGit {
         .build()
 
     override fun getLastRelease(): String {
-        val response = retrofit.create(GithubReleaseApi::class.java).latestRelease(repoName).execute()
+        val response = retrofit.create(GithubURL::class.java).latestRelease(repoName).execute()
         response.raw().networkResponse()!!.request()
         check(response.code() == 200) { "http code return ${response.code()}" }
 
@@ -30,7 +29,7 @@ class GithubChecker(val repoName: String) : CheckVersionFromGit {
     }
 
     override fun getLastRelease(callback: (callback: String) -> Unit) {
-        retrofit.create(GithubReleaseApi::class.java).latestRelease(repoName).enqueue(object : Callback<String> {
+        retrofit.create(GithubURL::class.java).latestRelease(repoName).enqueue(object : Callback<String> {
             override fun onFailure(call: Call<String>, t: Throwable) {
                 throw t
             }

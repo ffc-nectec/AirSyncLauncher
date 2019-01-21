@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface GithubReleaseApi {
+interface GithubURL {
     @GET("{repoName}/releases/latest")
     fun latestRelease(
         @Path("repoName", encoded = true) repoName: String
