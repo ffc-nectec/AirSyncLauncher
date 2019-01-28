@@ -8,7 +8,7 @@ import java.net.URL
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-class DownloadZipStream(val url: URL, val fileSize: Long = 0) {
+class DownloadZipStream(val url: URL, val fileSize: Long = 0, val callSizeLoad: (Double) -> Unit = {}) {
     fun download(destDir: File = File("")) {
 
         println("File size ${fileSize.toDouble() / (1024 * 1024)}M")
@@ -28,8 +28,10 @@ class DownloadZipStream(val url: URL, val fileSize: Long = 0) {
             while (len > 0) {
                 fileSizeIndex += len
                 fos.write(buffer, 0, len)
-                if (fileSizeIndex % 10000 == 0L)
+                if (fileSizeIndex % 10000 == 0L) {
                     println("${fileSizeIndex.toDouble() / (1024 * 1024)}M")
+                    callSizeLoad(fileSizeIndex.toDouble())
+                }
                 len = zis.read(buffer)
             }
             fos.close()
