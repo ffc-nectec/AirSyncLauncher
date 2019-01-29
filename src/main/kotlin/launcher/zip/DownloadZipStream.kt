@@ -1,6 +1,5 @@
 package launcher.zip
 
-import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -15,7 +14,16 @@ class DownloadZipStream(val url: URL, val fileSize: Long = 0, val callSizeLoad: 
 
         var fileSizeIndex = 0L
 
-        val webInputStream = BufferedInputStream(url.openStream())
+        val webInputStream = MyBufferInputStream(url.openStream())
+
+        // Print percen load per 1 sec.
+        Thread {
+            while (true) {
+                callSizeLoad(webInputStream.sizeLoad.toDouble())
+                Thread.sleep(1000)
+            }
+        }.start()
+
         val zis = ZipInputStream(webInputStream)
 
         val buffer = ByteArray(1024)
@@ -30,7 +38,6 @@ class DownloadZipStream(val url: URL, val fileSize: Long = 0, val callSizeLoad: 
                 fos.write(buffer, 0, len)
                 if (fileSizeIndex % 10000 == 0L) {
                     println("${fileSizeIndex.toDouble() / (1024 * 1024)}M")
-                    callSizeLoad(fileSizeIndex.toDouble())
                 }
                 len = zis.read(buffer)
             }
