@@ -16,18 +16,20 @@ internal class Main constructor(val args: Array<String>) {
         pv.append = "Check version..."
         val proc = Runtime.getRuntime().exec(commandGetAirsyncVersion)
         val airsyncVersion = proc.inputStream.reader().readText()
-        pv.append = "Version is $airsyncVersion"
+        pv.append = "Version local is $airsyncVersion"
+
         val github = ApiGithubRelease("ffc-nectec/airsync").getLastRelease()
+        pv.append = "Version github is ${github.tag_name}"
+
         if (airsyncVersion != github.tag_name) {
             val assertInstall = github.assets.find { it.name == "install.zip" }!!
+            pv.append = "Download new version..."
 
-            val callback = { size: Double ->
+            val urlZip = URL(assertInstall.browser_download_url)
+            val zip = DownloadZipStream(urlZip, assertInstall.size) { size: Double ->
                 val percen = (size / assertInstall.size) * 100
                 pv.append = "Load complete $percen %"
             }
-
-            val urlZip = URL(assertInstall.browser_download_url)
-            val zip = DownloadZipStream(urlZip, assertInstall.size, callSizeLoad = callback)
 
             zip.download()
         }
