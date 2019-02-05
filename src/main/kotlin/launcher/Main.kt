@@ -3,6 +3,7 @@ package launcher
 import launcher.view.PrintView
 import launcher.zip.DownloadZipStream
 import max.kotlin.checkdupp.CheckDupplicateWithRest
+import max.kotlin.checkdupp.DupplicateProcessException
 import version.apigithub.ApiGithubRelease
 import java.net.URL
 
@@ -16,6 +17,14 @@ internal class Main constructor(val args: Array<String>) {
         val pv = PrintView()
         pv.isVisible = true
 
+        pv.append = "Check duplicate process."
+        try {
+            procName.register()
+        } catch (ex: DupplicateProcessException) {
+            pv.dispose()
+            System.exit(1)
+        }
+
         pv.append = "Check version..."
         val proc = Runtime.getRuntime().exec(commandGetAirsyncVersion)
         val airsyncVersion = proc.inputStream.reader().readText()
@@ -23,8 +32,6 @@ internal class Main constructor(val args: Array<String>) {
 
         val github = ApiGithubRelease("ffc-nectec/airsync").getLastRelease()
         pv.append = "Version github is ${github.tag_name}"
-
-        procName.register()
 
         if (airsyncVersion != github.tag_name) {
             val assertInstall = github.assets.find { it.name == "install.zip" }!!
