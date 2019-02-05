@@ -2,6 +2,7 @@ package launcher
 
 import launcher.view.PrintView
 import launcher.zip.DownloadZipStream
+import max.kotlin.checkdupp.CheckDupplicateWithRest
 import version.apigithub.ApiGithubRelease
 import java.net.URL
 
@@ -9,6 +10,8 @@ private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
 private const val commandRunAirsync = "cmd /k start java -jar airsync.jar"
 
 internal class Main constructor(val args: Array<String>) {
+    private val procName = CheckDupplicateWithRest("airsync")
+
     fun run() {
         val pv = PrintView()
         pv.isVisible = true
@@ -21,6 +24,8 @@ internal class Main constructor(val args: Array<String>) {
         val github = ApiGithubRelease("ffc-nectec/airsync").getLastRelease()
         pv.append = "Version github is ${github.tag_name}"
 
+        procName.register()
+
         if (airsyncVersion != github.tag_name) {
             val assertInstall = github.assets.find { it.name == "install.zip" }!!
             pv.append = "Download new version..."
@@ -30,7 +35,6 @@ internal class Main constructor(val args: Array<String>) {
                 val percen = (size / assertInstall.size) * 100
                 pv.append = "Load complete $percen %"
             }
-
             zip.download()
         }
         pv.append = "Complete patch..."
