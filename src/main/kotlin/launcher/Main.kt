@@ -1,6 +1,6 @@
 package launcher
 
-import launcher.view.PrintView
+import hii.log.print.easy.EasyPrintLogGUI
 import launcher.zip.DownloadZipStream
 import max.java.c64support.CheckJava64BitSupportWithCommand
 import max.kotlin.checkdupp.CheckDupplicateWithRest
@@ -16,7 +16,7 @@ internal class Main constructor(val args: Array<String>) {
     private val procName = CheckDupplicateWithRest("airsync")
 
     fun run() {
-        val pv = PrintView()
+        val pv = EasyPrintLogGUI("Patch Load...")
         pv.isVisible = true
         run {
             val mb = 1024L * 1024L
@@ -25,14 +25,14 @@ internal class Main constructor(val args: Array<String>) {
             val freeMemory = runtime.freeMemory()
             val maxMemory = runtime.maxMemory()
 
-            pv.append = ("Total mem = ${totalMemory / mb}")
-            pv.append = ("Free mem = ${freeMemory / mb}")
-            pv.append = ("User mem = ${(totalMemory - freeMemory) / mb}")
-            pv.append = ("Max mem = ${maxMemory / mb}")
+            pv.text = ("Total mem = ${totalMemory / mb}")
+            pv.text = ("Free mem = ${freeMemory / mb}")
+            pv.text = ("User mem = ${(totalMemory - freeMemory) / mb}")
+            pv.text = ("Max mem = ${maxMemory / mb}")
         }
 
 
-        pv.append = "Check duplicate process."
+        pv.text = "Check duplicate process."
         try {
             procName.register()
         } catch (ex: DupplicateProcessException) {
@@ -40,26 +40,26 @@ internal class Main constructor(val args: Array<String>) {
             System.exit(1)
         }
 
-        pv.append = "Check version..."
+        pv.text = "Check version..."
         val proc = Runtime.getRuntime().exec(commandGetAirsyncVersion)
         val airsyncVersion = proc.inputStream.reader().readText()
-        pv.append = "Version local is $airsyncVersion"
+        pv.text = "Version local is $airsyncVersion"
 
         val github = ApiGithubRelease("ffc-nectec/airsync").getLastRelease()
-        pv.append = "Version github is ${github.tag_name}"
+        pv.text = "Version github is ${github.tag_name}"
 
         if (airsyncVersion != github.tag_name) {
             val assertInstall = github.assets.find { it.name == "install.zip" }!!
-            pv.append = "Download new version..."
+            pv.text = "Download new version..."
 
             val urlZip = URL(assertInstall.browser_download_url)
             val zip = DownloadZipStream(urlZip, assertInstall.size) { size: Double ->
                 val percen = (size / assertInstall.size) * 100
-                pv.append = "Load complete $percen %"
+                pv.text = "Load complete $percen %"
             }
             zip.download()
         }
-        pv.append = "Complete patch..."
+        pv.text = "Complete patch..."
         println(airsyncVersion)
         if (CheckJava64BitSupportWithCommand().is64Support())
             Runtime.getRuntime().exec(x64RunAirsync)
