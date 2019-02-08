@@ -2,50 +2,50 @@ package launcher
 
 import hii.log.print.easy.EasyPrintLogGUI
 import max.download.zip.ZIpDownload
+import max.githubapi.GitHubLatestApi
 import max.java.c64support.CheckJava64BitSupportWithCommand
 import max.kotlin.checkdupp.CheckDupplicateWithRest
 import max.kotlin.checkdupp.DupplicateProcessException
-import version.apigithub.ApiGithubRelease
+import java.io.FileWriter
 import java.net.URL
 
+private const val VERSION = "0.0.1"
 private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
 private const val defaultRunAirsync = "cmd /k start java -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar"
 private const val x64RunAirsync = "cmd /k start java -d64 -Xms1G -Xmx4G -jar -Dfile.encoding=UTF-8 -jar airsync.jar"
 
 internal class Main constructor(val args: Array<String>) {
     private val procName = CheckDupplicateWithRest("airsync")
+    private val pv = EasyPrintLogGUI("Patch Load...", width = 900, lineLimit = 100)
 
     fun run() {
-        val pv = EasyPrintLogGUI("Patch Load...")
         pv.isVisible = true
-        run {
-            val mb = 1024L * 1024L
-            val runtime = Runtime.getRuntime()
-            val totalMemory = runtime.totalMemory()
-            val freeMemory = runtime.freeMemory()
-            val maxMemory = runtime.maxMemory()
+        machineStatus()
+        stampLauncherVersion()
+        checkDuplicateProcess()
+        checkAirSyncVersion()
 
-            pv.text = ("Total mem = ${totalMemory / mb}")
-            pv.text = ("Free mem = ${freeMemory / mb}")
-            pv.text = ("User mem = ${(totalMemory - freeMemory) / mb}")
-            pv.text = ("Max mem = ${maxMemory / mb}")
-        }
+        if (CheckJava64BitSupportWithCommand().is64Support())
+            Runtime.getRuntime().exec(x64RunAirsync)
+        else
+            Runtime.getRuntime().exec(defaultRunAirsync)
+        pv.dispose()
+        System.exit(0)
+    }
 
+    private fun stampLauncherVersion() {
+        val fw = FileWriter("launcher.version")
+        fw.write(VERSION)
+        fw.close()
+    }
 
-        pv.text = "Check duplicate process."
-        try {
-            procName.register()
-        } catch (ex: DupplicateProcessException) {
-            pv.dispose()
-            System.exit(1)
-        }
-
-        pv.text = "Check version..."
+    private fun checkAirSyncVersion() {
+        pv.text = "Check Air Sync version..."
         val proc = Runtime.getRuntime().exec(commandGetAirsyncVersion)
         val airsyncVersion = proc.inputStream.reader().readText()
         pv.text = "Version local is $airsyncVersion"
 
-        val github = ApiGithubRelease("ffc-nectec/airsync").getLastRelease()
+        val github = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
         pv.text = "Version github is ${github.tag_name}"
 
         if (airsyncVersion != github.tag_name) {
@@ -61,12 +61,31 @@ internal class Main constructor(val args: Array<String>) {
         }
         pv.text = "Complete patch..."
         println(airsyncVersion)
-        if (CheckJava64BitSupportWithCommand().is64Support())
-            Runtime.getRuntime().exec(x64RunAirsync)
-        else
-            Runtime.getRuntime().exec(defaultRunAirsync)
-        pv.dispose()
-        System.exit(0)
+    }
+
+    private fun checkDuplicateProcess() {
+        pv.text = "Check duplicate process."
+        try {
+            procName.register()
+        } catch (ex: DupplicateProcessException) {
+            pv.dispose()
+            System.exit(1)
+        }
+    }
+
+    private fun machineStatus() {
+        run {
+            val mb = 1024L * 1024L
+            val runtime = Runtime.getRuntime()
+            val totalMemory = runtime.totalMemory()
+            val freeMemory = runtime.freeMemory()
+            val maxMemory = runtime.maxMemory()
+
+            pv.text = ("Total mem = ${totalMemory / mb}")
+            pv.text = ("Free mem = ${freeMemory / mb}")
+            pv.text = ("User mem = ${(totalMemory - freeMemory) / mb}")
+            pv.text = ("Max mem = ${maxMemory / mb}")
+        }
     }
 }
 
