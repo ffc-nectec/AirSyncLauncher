@@ -1,7 +1,7 @@
 package launcher
 
 import hii.log.print.easy.EasyPrintLogGUI
-import launcher.zip.DownloadZipStream
+import max.download.zip.ZIpDownload
 import max.java.c64support.CheckJava64BitSupportWithCommand
 import max.kotlin.checkdupp.CheckDupplicateWithRest
 import max.kotlin.checkdupp.DupplicateProcessException
@@ -53,7 +53,7 @@ internal class Main constructor(val args: Array<String>) {
             pv.text = "Download new version..."
 
             val urlZip = URL(assertInstall.browser_download_url)
-            val zip = DownloadZipStream(urlZip, assertInstall.size) { size: Double ->
+            val zip = ZIpDownload(urlZip) { size: Double ->
                 val percen = (size / assertInstall.size) * 100
                 pv.text = "Load complete $percen %"
             }
