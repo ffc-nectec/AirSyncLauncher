@@ -6,13 +6,16 @@ import max.githubapi.GitHubLatestApi
 import max.java.c64support.CheckJava64BitSupportWithCommand
 import max.kotlin.checkdupp.CheckDupplicateWithRest
 import max.kotlin.checkdupp.DupplicateProcessException
+import java.io.File
 import java.io.FileWriter
 import java.net.URL
 
-private const val VERSION = "0.0.1"
+private const val VERSION = "0.0.2"
 private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
-private const val defaultRunAirsync = "cmd /k start java -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar"
-private const val x64RunAirsync = "cmd /k start java -d64 -Xms1G -Xmx4G -jar -Dfile.encoding=UTF-8 -jar airsync.jar"
+private const val defaultRunAirsync =
+    "cmd /k start java -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -launcher"
+private const val x64RunAirsync =
+    "cmd /k start java -d64 -Xms1G -Xmx4G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -launcher"
 
 internal class Main constructor(val args: Array<String>) {
     private val procName = CheckDupplicateWithRest("airsync")
@@ -57,7 +60,7 @@ internal class Main constructor(val args: Array<String>) {
                 val percen = (size / assertInstall.size) * 100
                 pv.text = "Load complete $percen %"
             }
-            zip.download()
+            zip.download(File(""))
         }
         pv.text = "Complete patch..."
         println(airsyncVersion)
