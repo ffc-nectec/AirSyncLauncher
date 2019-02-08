@@ -10,12 +10,12 @@ import java.io.File
 import java.io.FileWriter
 import java.net.URL
 
-private const val VERSION = "0.0.2"
+private const val VERSION = "0.0.3"
 private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
 private const val defaultRunAirsync =
-    "cmd /k start java -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -launcher"
+    "cmd /k start java -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar"
 private const val x64RunAirsync =
-    "cmd /k start java -d64 -Xms1G -Xmx4G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -launcher"
+    "cmd /k start java -d64 -Xms1G -Xmx4G -jar -Dfile.encoding=UTF-8 -jar airsync.jar"
 
 internal class Main constructor(val args: Array<String>) {
     private val procName = CheckDupplicateWithRest("airsync")
@@ -23,8 +23,8 @@ internal class Main constructor(val args: Array<String>) {
 
     fun run() {
         pv.isVisible = true
-        machineStatus()
         stampLauncherVersion()
+        machineStatus()
         checkDuplicateProcess()
         checkAirSyncVersion()
 
