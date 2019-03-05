@@ -6,11 +6,12 @@ import max.githubapi.GitHubLatestApi
 import max.java.c64support.CheckJava64BitSupportWithCommand
 import max.kotlin.checkdupp.CheckDupplicateWithRest
 import max.kotlin.checkdupp.DupplicateProcessException
+import max.windows.createlink.CreateLink
 import java.io.File
 import java.io.FileWriter
 import java.net.URL
 
-private const val VERSION = "0.0.3"
+private const val VERSION = "0.0.4"
 private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
 private const val defaultRunAirsync =
     "cmd /k start java -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar"
@@ -23,6 +24,8 @@ internal class Main constructor(val args: Array<String>) {
 
     fun run() {
         pv.isVisible = true
+        pv.text = "Create startup"
+        createStartupLink()
         stampLauncherVersion()
         machineStatus()
         checkDuplicateProcess()
@@ -74,6 +77,12 @@ internal class Main constructor(val args: Array<String>) {
             pv.dispose()
             System.exit(1)
         }
+    }
+
+    private fun createStartupLink() {
+        val runParth = System.getProperty("user.dir")!! + "\\AirSyncLauncher.exe"
+        val link = CreateLink(File(runParth))
+        link.build(File(link.userWindowsStartupPath + "AirSyncLauncher"))
     }
 
     private fun machineStatus() {
