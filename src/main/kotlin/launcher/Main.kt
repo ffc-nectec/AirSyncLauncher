@@ -82,7 +82,7 @@ internal class Main constructor(val args: Array<String>) {
     private fun createStartupLink() {
         val runParth = System.getProperty("user.dir")!! + "\\AirSyncLauncher.exe"
         val link = CreateLink(File(runParth))
-        link.build(File(link.userWindowsStartupPath + "AirSyncLauncher"))
+        link.build(File(link.userWindowsStartupPath + "AirSyncLauncher"), override = true)
     }
 
     private fun machineStatus() {
