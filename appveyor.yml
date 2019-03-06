@@ -9,6 +9,9 @@ environment:
 build:
   verbosity: detailed
 
+before_build:
+  - gradlew.bat buildByVersion -PVERSION=$(tag)
+
 build_script:
   - gradlew.bat build --info --no-daemon
   - gradlew.bat createAllExecutables
@@ -22,7 +25,7 @@ matrix:
   fast_finish: true
 
 deploy:
-  description: 'FFC airsync...'
+  description: 'โปรแกรม ffc-airsync'
   provider: GitHub
   auth_token:
     secure: q3WgoVWpklbGnGcjjS7g8QKNDoD6roJ7PY+BDWFg4I2h5CC9QdCjhd5MM3HSlRPz
