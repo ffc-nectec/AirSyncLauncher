@@ -50,6 +50,7 @@ launch4j {
     manifest = "$projectDir/launch4j.manifest"
     outfile = "ffc-airsync.exe"
     icon = "$projectDir/logo.ico"
+    // splashFileName = "$projectDir/splash.bmp"
     jreRuntimeBits = '64/32'
 }
 

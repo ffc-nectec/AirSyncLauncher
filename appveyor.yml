@@ -11,6 +11,8 @@ build:
 
 build_script:
   - gradlew.bat assemble --info --no-daemon
+  - gradlew.bat createAllExecutables
+  - ls -al build/launch4j/
 
 test_script:
   - gradlew.bat check --info --no-daemon
