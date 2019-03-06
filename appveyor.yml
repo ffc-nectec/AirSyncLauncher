@@ -9,26 +9,33 @@ environment:
 build:
   verbosity: detailed
 
+before_build:
+  - ECHO %APPVEYOR_REPO_TAG_NAME%
+
 build_script:
+  - IF DEFINED APPVEYOR_REPO_TAG_NAME ( gradlew.bat buildByVersion -PVERSION=%APPVEYOR_REPO_TAG_NAME% )
   - gradlew.bat build --info --no-daemon
   - gradlew.bat createAllExecutables
   - ls -al build/launch4j/
   - pwd
 
-test_script:
-  - gradlew.bat check --info --no-daemon
 cache:
-  - C:\Users\appveyor\.gradle -> **\*.gradle
+  - .gradle
 
 matrix:
   fast_finish: true
 
+artifacts:
+  - path: build/launch4j/ffc-airsync.exe
+    name: ffc-airsync client
+    type: File
+
 deploy:
-  description: 'FFC airsync...'
+  description: 'โปรแกรม ffc-airsync'
   provider: GitHub
   auth_token:
     secure: q3WgoVWpklbGnGcjjS7g8QKNDoD6roJ7PY+BDWFg4I2h5CC9QdCjhd5MM3HSlRPz
-  artifact: /c/projects/airsynclauncher/build/launch4j/ffc-airsync.exe
+  artifact: /.*\.exe/
   draft: false
   prerelease: false
   on:
