@@ -18,14 +18,17 @@ build_script:
   - gradlew.bat createAllExecutables
   - ls -al build/launch4j/
   - pwd
-after_build:
-  - mv build/launch4j/ffc-airsync.exe ffc-airsync.exe
 
 cache:
   - .gradle
 
 matrix:
   fast_finish: true
+
+artifacts:
+  - path: build/launch4j/ffc-airsync.exe
+    name: ffc-airsync client
+    type: File
 
 deploy:
   description: 'โปรแกรม ffc-airsync'
