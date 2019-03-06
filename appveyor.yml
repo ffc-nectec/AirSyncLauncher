@@ -26,7 +26,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: q3WgoVWpklbGnGcjjS7g8QKNDoD6roJ7PY+BDWFg4I2h5CC9QdCjhd5MM3HSlRPz
-  artifact: /c/projects/airsynclauncher/build/launch4j/ffc-airsync.exe
+  artifact: /.*/ffc-airsync.exe
   draft: false
   prerelease: false
   on:
