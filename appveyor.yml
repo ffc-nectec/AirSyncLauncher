@@ -10,7 +10,7 @@ build:
   verbosity: detailed
 
 build_script:
-  - gradlew.bat jar
+  - gradlew.bat build --info --no-daemon
   - gradlew.bat createAllExecutables
   - ls -al build/launch4j/
 
@@ -18,20 +18,18 @@ test_script:
   - gradlew.bat check --info --no-daemon
 
 cache:
-  - C:\Users\appveyor\.gradle -> cleanup-cache.txt
+  - C:\Users\appveyor\.gradle
 
 matrix:
   fast_finish: true
 
 deploy:
-  release: myproduct-v$(appveyor_build_version)
-  description: 'Release description'
+  description: 'FFC airsync...'
   provider: GitHub
   auth_token:
     secure: q3WgoVWpklbGnGcjjS7g8QKNDoD6roJ7PY+BDWFg4I2h5CC9QdCjhd5MM3HSlRPz
-  artifact: build/launch4j/*.exe
+  artifact: build/launch4j/ffc-airsync.exe
   draft: false
   prerelease: false
   on:
-    branch: master
     APPVEYOR_REPO_TAG: true
