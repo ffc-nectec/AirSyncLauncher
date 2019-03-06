@@ -55,7 +55,7 @@ internal class Main constructor(val args: Array<String>) {
         pv.text = "Version github is ${github.tag_name}"
 
         if (airsyncVersion != github.tag_name) {
-            val assertInstall = github.assets.find { it.name == "install.zip" }!!
+            val assertInstall = github.assets.find { it.name == "airsync.zip" }!!
             pv.text = "Download new version..."
 
             val urlZip = URL(assertInstall.browser_download_url)
@@ -80,9 +80,15 @@ internal class Main constructor(val args: Array<String>) {
     }
 
     private fun createStartupLink() {
-        val runParth = System.getProperty("user.dir")!! + "\\AirSyncLauncher.exe"
+        val runParth = System.getProperty("user.dir")!! + "\\ffc-airsync.exe"
         val link = CreateLink(File(runParth))
-        link.build(File(link.userWindowsStartupPath + "AirSyncLauncher"), override = true)
+        // link.build(File(link.userWindowsStartupPath + "AirSyncLauncher"), override = true)
+
+        val startupFile = FileWriter(File(link.userWindowsStartupPath + "ffc-airsync.bat"), false)
+
+        startupFile.write("\"$runParth\"")
+        startupFile.flush()
+        startupFile.close()
     }
 
     private fun machineStatus() {
