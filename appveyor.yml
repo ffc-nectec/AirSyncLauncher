@@ -10,9 +10,10 @@ build:
   verbosity: detailed
 
 before_build:
-  - gradlew.bat buildByVersion -PVERSION=$(tag)
+  - ECHO %tag%
 
 build_script:
+  - IF DEFINED tag (gradlew.bat buildByVersion -PVERSION=$(tag))
   - gradlew.bat build --info --no-daemon
   - gradlew.bat createAllExecutables
   - ls -al build/launch4j/
