@@ -15,10 +15,8 @@ build_script:
   - ls -al build/launch4j/
   - pwd
 
-test_script:
-  - gradlew.bat check --info --no-daemon
 cache:
-  - C:\Users\appveyor\.gradle -> **\*.gradle
+  - .gradle
 
 matrix:
   fast_finish: true
