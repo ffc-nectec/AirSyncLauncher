@@ -13,6 +13,7 @@ build_script:
   - gradlew.bat build --info --no-daemon
   - gradlew.bat createAllExecutables
   - ls -al build/launch4j/
+  - pwd
 
 test_script:
   - gradlew.bat check --info --no-daemon
@@ -28,7 +29,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: q3WgoVWpklbGnGcjjS7g8QKNDoD6roJ7PY+BDWFg4I2h5CC9QdCjhd5MM3HSlRPz
-  artifact: build/launch4j/ffc-airsync.exe
+  artifact: launch4j/ffc-airsync.exe
   draft: false
   prerelease: false
   on:
