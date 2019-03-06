@@ -11,7 +11,7 @@ import java.io.File
 import java.io.FileWriter
 import java.net.URL
 
-private const val VERSION = "0.0.4"
+private const val VERSION = "0.0.5"
 private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
 private const val defaultRunAirsync =
     "cmd /k start java -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar"
@@ -24,10 +24,9 @@ internal class Main constructor(val args: Array<String>) {
 
     fun run() {
         pv.isVisible = true
-        pv.text = "Create startup"
+        pv.text = "สร้างตัวช่วยในการใช้งานอัตโนมัติ"
         createStartupLink()
         stampLauncherVersion()
-        machineStatus()
         checkDuplicateProcess()
         checkAirSyncVersion()
 
@@ -89,21 +88,6 @@ internal class Main constructor(val args: Array<String>) {
         startupFile.write("\"$runParth\"")
         startupFile.flush()
         startupFile.close()
-    }
-
-    private fun machineStatus() {
-        run {
-            val mb = 1024L * 1024L
-            val runtime = Runtime.getRuntime()
-            val totalMemory = runtime.totalMemory()
-            val freeMemory = runtime.freeMemory()
-            val maxMemory = runtime.maxMemory()
-
-            pv.text = ("Total mem = ${totalMemory / mb}")
-            pv.text = ("Free mem = ${freeMemory / mb}")
-            pv.text = ("User mem = ${(totalMemory - freeMemory) / mb}")
-            pv.text = ("Max mem = ${maxMemory / mb}")
-        }
     }
 }
 
