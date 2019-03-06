@@ -10,10 +10,10 @@ build:
   verbosity: detailed
 
 before_build:
-  - ECHO %tag%
+  - ECHO %APPVEYOR_REPO_TAG_NAME%
 
 build_script:
-  - IF DEFINED tag (gradlew.bat buildByVersion -PVERSION=$(tag))
+  - IF DEFINED APPVEYOR_REPO_TAG_NAME ( gradlew.bat buildByVersion -PVERSION=%APPVEYOR_REPO_TAG_NAME% )
   - gradlew.bat build --info --no-daemon
   - gradlew.bat createAllExecutables
   - ls -al build/launch4j/
