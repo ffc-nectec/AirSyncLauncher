@@ -20,8 +20,8 @@ build_script:
   - pwd
 
 after_build:
-  - 7z ffc-airsync.zip build/launch4j/ffc-airsync.exe -mx9
-
+  - 7z -mx9 ffc-airsync.zip build/launch4j/ffc-airsync.exe
+  -
 cache:
   - .gradle
 
