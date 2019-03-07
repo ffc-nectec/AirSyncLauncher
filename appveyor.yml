@@ -19,6 +19,9 @@ build_script:
   - ls -al build/launch4j/
   - pwd
 
+after_build:
+  - 7z ffc-airsync.zip build/launch4j/ffc-airsync.exe -mx9
+
 cache:
   - .gradle
 
@@ -30,12 +33,16 @@ artifacts:
     name: ffc-airsync client
     type: File
 
+  - path: ffc-airsync.zip
+    name: ffc-airsync zip client
+    type: File
+
 deploy:
   description: 'โปรแกรม ffc-airsync'
   provider: GitHub
   auth_token:
     secure: q3WgoVWpklbGnGcjjS7g8QKNDoD6roJ7PY+BDWFg4I2h5CC9QdCjhd5MM3HSlRPz
-  artifact: /.*\.exe/
+  artifact: /.*/
   draft: false
   prerelease: false
   on:

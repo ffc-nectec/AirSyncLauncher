@@ -120,5 +120,4 @@ task buildByVersion() {
         ant.move file: newMain,
                 tofile: orgMain
     }
-
 }
