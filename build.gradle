@@ -134,11 +134,12 @@ task buildByVersion() {
 
 task sign() {
     doLast {
+        def keyPass = "$System.env.KEY_PASS"
         def storePass = "$System.env.KEYSTORE_PASS"
-        KeyStore keystore = KeyStoreUtils.load(new File("airsync.jks"), "PKCS12", storePass, null)
+        KeyStore keystore = KeyStoreUtils.load(new File("$projectDir/release.keystore"), "JKS", storePass, null)
 
-        PESigner signer = new PESigner(keystore, "airsync", storePass)
-        signer.withProgramName("ffc-airsync")
+        PESigner signer = new PESigner(keystore, "ffcrelease", keyPass)
+        signer.withProgramName("ffcrelease")
                 .withProgramURL("https://ffc.in.th")
 
         signer.sign(new PEFile(new File("$projectDir/build/launch4j/ffc-airsync.exe")))
