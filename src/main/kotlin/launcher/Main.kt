@@ -1,5 +1,6 @@
 package launcher
 
+import com.nstda.hii.airsynclauncher.BuildConfig
 import hii.log.print.easy.EasyPrintLogGUI
 import max.download.zip.ZIpDownload
 import max.githubapi.GitHubLatestApi
@@ -11,7 +12,7 @@ import java.io.File
 import java.io.FileWriter
 import java.net.URL
 
-private const val VERSION = "0.0.5"
+private const val VERSION = BuildConfig.VERSION
 private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
 private const val defaultRunAirsync =
     "cmd /k start javaw -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -runnow >> airsync.log"
