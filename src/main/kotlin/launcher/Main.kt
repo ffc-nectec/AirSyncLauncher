@@ -12,7 +12,6 @@ import java.io.File
 import java.io.FileWriter
 import java.net.URL
 
-private const val VERSION = BuildConfig.VERSION
 private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
 private const val defaultRunAirsync =
     "cmd /k start javaw -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -runnow >> airsync.log"
@@ -41,7 +40,7 @@ internal class Main constructor(val args: Array<String>) {
 
     private fun stampLauncherVersion() {
         val fw = FileWriter("launcher.version")
-        fw.write(VERSION)
+        fw.write(BuildConfig.VERSION)
         fw.close()
     }
 
