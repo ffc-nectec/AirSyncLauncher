@@ -1,5 +1,7 @@
 package ffc.airsync.launcher
 
+import java.awt.Image
+import javax.imageio.ImageIO
 import javax.swing.JFrame
 
 class SplashScreenFrame : Ui {
@@ -8,6 +10,9 @@ class SplashScreenFrame : Ui {
     val frame = JFrame("FFC")
 
     init {
+        frame.iconImages = listOf<Image>(
+                ImageIO.read(javaClass.classLoader.getResource("icon/512x512.png"))
+        )
         frame.isUndecorated = true
         frame.setSize(800, 480)
         frame.contentPane = splashScreen.panel
