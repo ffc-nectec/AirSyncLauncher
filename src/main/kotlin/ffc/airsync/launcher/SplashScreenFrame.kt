@@ -14,7 +14,7 @@ class SplashScreenFrame : Ui {
         frame.setLocationRelativeTo(null)
         frame.isVisible = true
 
-        splashScreen.versionLabel.text = "v${BuildConfig.NAME}"
+        splashScreen.versionLabel.text = "v${BuildConfig.VERSION}"
     }
 
     override fun show() {
