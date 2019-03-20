@@ -47,7 +47,7 @@ internal class Launcher constructor(val args: Array<String>) {
 
     private fun stampLauncherVersion() {
         ui.updateProgress(2, 10, "บันทึกเวอร์ชั่นปัจจุบัน")
-        val fw = FileWriter("ffc.airsync.launcher.version")
+        val fw = FileWriter("launcher.version")
         fw.write(BuildConfig.VERSION)
         fw.close()
     }
