@@ -1,5 +1,3 @@
-import java.nio.charset.StandardCharsets
-
 buildscript {
     repositories {
         jcenter()
@@ -8,6 +6,7 @@ buildscript {
         classpath 'edu.sc.seis.gradle:launch4j:2.4.4'
     }
 }
+
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.3.21'
@@ -16,11 +15,15 @@ plugins {
     id 'com.palantir.git-version' version '0.11.0'
 }
 apply plugin: 'idea'
+apply plugin: 'application'
+
+mainClassName = 'ffc.airsync.launcher.MainKt'
+
 configurations {
     ktlint
 }
 
-group 'com.nstda.hii.airsynclauncher'
+group 'ffc.airsync.launcher'
 version gitVersion()
 sourceCompatibility = 1.8
 
@@ -33,7 +36,6 @@ repositories {
 dependencies {
     ktlint "com.github.shyiko:ktlint:0.30.0"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-
     compile 'com.github.lionants02:CheckDuplicate:0.0.4'
     compile 'com.github.lionants02:check46BitSupport:0.0.1'
     compile 'com.github.lionants02:EasyPrintLogGUI:0.0.2'
@@ -41,15 +43,16 @@ dependencies {
     compile 'com.github.lionants02:GitHubLatestApi:0.0.1'
     compile 'com.github.lionants02:WindowsCreateLink:0.0.2'
     compile 'com.github.lionants02:JvmIsAdmin:0.0.1'
+    compile 'com.intellij:forms_rt:7.0.3'
 
     testImplementation "org.amshove.kluent:kluent:1.34"
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation "junit:junit:4.12"
 }
 
 launch4j {
     headerType = 'gui'
-    mainClassName = 'launcher.MainKt'
-    productName = 'FFC AirSync Client'
+    mainClassName = 'ffc.airsync.launcher.MainKt'
+    productName = 'FFC AirSync'
     manifest = "$projectDir/launch4j.manifest"
     outfile = "ffc-airsync.exe"
     icon = "$projectDir/logo.ico"
@@ -71,7 +74,7 @@ jar {
     }
     destinationDir = file("$buildDir/bin")
 
-    manifest { attributes "Main-Class": "launcher.MainKt" }
+    manifest { attributes "Main-Class": "ffc.airsync.launcher.MainKt" }
 
     exclude 'META-INF/*.RSA'
     exclude 'META-INF/*.SF'
@@ -100,26 +103,3 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
     args "-F", "src/**/*.kt"
 }
 
-task buildByVersion() {
-    def orgMain = "$projectDir/src/main/kotlin/launcher/Main.kt"
-    def newMain = "$projectDir/src/main/kotlin/launcher/Main.kt.new"
-
-    doLast {
-        def file = file(orgMain)
-        def data = file.readLines()
-        def fstream = new OutputStreamWriter(new FileOutputStream(newMain), StandardCharsets.UTF_8)
-        println(data.size())
-        data.each {
-            if (it.contains("val VERSION")) {
-                fstream.println("private const val VERSION = \"$VERSION\"")
-            } else {
-                fstream.println(it)
-            }
-        }
-        fstream.close()
-
-        delete orgMain
-        ant.move file: newMain,
-                tofile: orgMain
-    }
-}

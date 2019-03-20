@@ -1,4 +1,4 @@
-package launcher
+package ffc.airsync.launcher
 
 interface Ui {
     fun show()

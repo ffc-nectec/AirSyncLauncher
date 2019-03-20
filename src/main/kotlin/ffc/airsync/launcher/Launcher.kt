@@ -1,6 +1,5 @@
-package launcher
+package ffc.airsync.launcher
 
-import com.nstda.hii.airsynclauncher.BuildConfig
 import max.download.zip.ZIpDownload
 import max.githubapi.GitHubLatestApi
 import max.java.c64support.CheckJava64BitSupportWithCommand
@@ -48,7 +47,7 @@ internal class Launcher constructor(val args: Array<String>) {
 
     private fun stampLauncherVersion() {
         ui.updateProgress(2, 10, "บันทึกเวอร์ชั่นปัจจุบัน")
-        val fw = FileWriter("launcher.version")
+        val fw = FileWriter("ffc.airsync.launcher.version")
         fw.write(BuildConfig.VERSION)
         fw.close()
     }
@@ -92,9 +91,4 @@ internal class Launcher constructor(val args: Array<String>) {
         else
             Runtime.getRuntime().exec(defaultRunAirsync)
     }
-
-}
-
-fun main(args: Array<String>) {
-    Launcher(args).run()
 }

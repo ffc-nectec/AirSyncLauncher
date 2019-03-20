@@ -1,4 +1,4 @@
-package launcher
+package ffc.airsync.launcher
 
 import javax.swing.JFrame
 
@@ -13,6 +13,8 @@ class SplashScreenFrame : Ui {
         frame.contentPane = splashScreen.panel
         frame.setLocationRelativeTo(null)
         frame.isVisible = true
+
+        splashScreen.versionLabel.text = "v${BuildConfig.NAME}"
     }
 
     override fun show() {
@@ -37,5 +39,4 @@ class SplashScreenFrame : Ui {
         set(value) {
             splashScreen.progressTitle.text = value
         }
-
 }
