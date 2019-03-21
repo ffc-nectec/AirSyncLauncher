@@ -9,6 +9,7 @@ import max.windows.createlink.CreateLink
 import java.io.File
 import java.io.FileWriter
 import java.net.URL
+import javax.swing.JOptionPane
 
 private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
 private const val defaultRunAirsync =
@@ -21,17 +22,27 @@ internal class Launcher constructor(val args: Array<String>) {
     private val ui: Ui = SplashScreenFrame()
 
     fun run() {
-        ui.show()
-        ui.text = "กำหนดค่าตั้งต้น"
-        createStartupLink()
-        stampLauncherVersion()
-        checkDuplicateProcess()
-        ui.text = "ตรวจสอบเวอร์ชั่น"
-        checkAirSyncVersion()
-        ui.text = ""
-        launchAirSync()
-        ui.dispose()
-        System.exit(0)
+        try {
+            ui.show()
+            ui.text = "กำหนดค่าตั้งต้น"
+            createStartupLink()
+            stampLauncherVersion()
+            checkDuplicateProcess()
+            ui.text = "ตรวจสอบเวอร์ชั่น"
+            checkAirSyncVersion()
+            ui.text = ""
+            launchAirSync()
+            ui.dispose()
+            System.exit(0)
+        } catch (exception: Throwable) {
+            ui.dispose()
+            JOptionPane.showMessageDialog(
+                null,
+                exception.message,
+                "FFC AirSync Launcher",
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
     }
 
     private fun createStartupLink() {
