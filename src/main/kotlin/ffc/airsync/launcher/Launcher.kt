@@ -12,9 +12,9 @@ import java.net.URL
 
 private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
 private const val defaultRunAirsync =
-    "cmd /k start javaw -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -runnow >> airsync.log"
+    "cmd /k start javaw -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -runnow > airsync.log"
 private const val x64RunAirsync =
-    "cmd /k start javaw -d64 -Xms1G -Xmx5G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -runnow >> airsync.log"
+    "cmd /k start javaw -d64 -Xms1G -Xmx5G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -runnow > airsync.log"
 
 internal class Launcher constructor(val args: Array<String>) {
     private val procName = CheckDupplicateWithRest("airsync")
