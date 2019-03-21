@@ -11,27 +11,22 @@ import java.io.FileWriter
 import java.net.URL
 import javax.swing.JOptionPane
 
-private const val commandGetAirsyncVersion = "java -jar airsync.jar -v"
-private const val defaultRunAirsync =
-    "cmd /k start javaw -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -runnow > airsync.log"
-private const val x64RunAirsync =
-    "cmd /k start javaw -d64 -Xms1G -Xmx5G -jar -Dfile.encoding=UTF-8 -jar airsync.jar -runnow > airsync.log"
-
 internal class Launcher constructor(val args: Array<String>) {
-    private val procName = CheckDupplicateWithRest("airsync")
+
     private val ui: Ui = SplashScreenFrame()
 
     fun run() {
         try {
             ui.show()
             ui.text = "กำหนดค่าตั้งต้น"
-            createStartupLink()
-            stampLauncherVersion()
+            val appFolder = prepareAppFolder()
+            createStartupLink(appFolder)
+            stampLauncherVersion(appFolder)
             checkDuplicateProcess()
             ui.text = "ตรวจสอบเวอร์ชั่น"
-            checkAirSyncVersion()
+            checkAirSyncVersion(appFolder)
             ui.text = ""
-            launchAirSync()
+            launchAirSync(appFolder)
             ui.dispose()
             System.exit(0)
         } catch (exception: Throwable) {
@@ -45,20 +40,27 @@ internal class Launcher constructor(val args: Array<String>) {
         }
     }
 
-    private fun createStartupLink() {
+    private fun prepareAppFolder(): File {
+        val root = System.getenv("APPDATA") ?: System.getProperty("user.home") + "\\AppData\\Roaming"
+        val appFolder = File(root, "FFC")
+        appFolder.mkdirs()
+        return appFolder
+    }
+
+    private fun createStartupLink(appFolder: File) {
         ui.updateProgress(1, 10, "สร้างลิงค์เชื่อมต่อโปรแกรม")
-        val runParth = System.getProperty("user.dir")!! + "\\ffc-airsync.exe"
-        val link = CreateLink(File(runParth))
+        val exeFile = File(appFolder, "ffc-airsync.exe")
+        val link = CreateLink(exeFile)
         val startupFile = FileWriter(File(link.userWindowsStartupPath + "ffc-airsync.bat"), false)
 
-        startupFile.write("\"$runParth\"")
+        startupFile.write("\"${exeFile.absolutePath}\"")
         startupFile.flush()
         startupFile.close()
     }
 
-    private fun stampLauncherVersion() {
+    private fun stampLauncherVersion(file: File) {
         ui.updateProgress(2, 10, "บันทึกเวอร์ชั่นปัจจุบัน")
-        val fw = FileWriter("launcher.version")
+        val fw = FileWriter(File(file, "launcher.version"))
         fw.write(BuildConfig.VERSION)
         fw.close()
     }
@@ -66,23 +68,24 @@ internal class Launcher constructor(val args: Array<String>) {
     private fun checkDuplicateProcess() {
         ui.updateProgress(3, 10, "ตรวจสอบสถานะโปรเสจ")
         try {
-            procName.register()
+            CheckDupplicateWithRest("airsync").register()
         } catch (ex: DupplicateProcessException) {
             ui.dispose()
             System.exit(1)
         }
     }
 
-    private fun checkAirSyncVersion() {
+    private fun checkAirSyncVersion(appFolder: File) {
         ui.updateProgress(message = "")
-        val proc = Runtime.getRuntime().exec(commandGetAirsyncVersion)
-        val airsyncVersion = proc.inputStream.reader().readText()
-        val github = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
+        val proc = Runtime.getRuntime().exec(cmdCheckAirSyncVersion(appFolder))
+        val localVersion = proc.inputStream.reader().readText()
+        val release = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
 
-        if (airsyncVersion != github.tag_name) {
+        print("airsync $localVersion, github ${release.tag_name}")
+        if (localVersion != release.tag_name) {
             ui.text = "ปรับปรุงเวอร์ชั่น"
-            val assertInstall = github.assets.find { it.name == "airsync.zip" }!!
-            val loadingMessage = "ดาวน์โหลดเวอร์ชั่น ${github.tag_name}"
+            val assertInstall = release.assets.find { it.name == "airsync.zip" }!!
+            val loadingMessage = "ดาวน์โหลดเวอร์ชั่น ${release.tag_name}"
             ui.updateProgress(0, 100, loadingMessage)
 
             val urlZip = URL(assertInstall.browser_download_url)
@@ -91,15 +94,15 @@ internal class Launcher constructor(val args: Array<String>) {
 
                 ui.updateProgress(progress.takeIf { it <= 100 } ?: 100, 100, loadingMessage)
             }
-            zip.download(File(""))
+            zip.download(appFolder)
         }
         ui.updateProgress(100, 100, "เวอร์ชั่นใหม่ล่าสุดแล้ว")
     }
 
-    private fun launchAirSync() {
+    private fun launchAirSync(appFolder: File) {
         if (CheckJava64BitSupportWithCommand().is64Support())
-            Runtime.getRuntime().exec(x64RunAirsync)
+            Runtime.getRuntime().exec(cmdLaunchAirSyncX64(appFolder))
         else
-            Runtime.getRuntime().exec(defaultRunAirsync)
+            Runtime.getRuntime().exec(cmdLaunchAirSync(appFolder))
     }
 }
