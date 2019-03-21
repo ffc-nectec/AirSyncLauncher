@@ -7,11 +7,13 @@ import javax.swing.JFrame
 class SplashScreenFrame : Ui {
 
     val splashScreen: SplashScreen = SplashScreen()
-    val frame = JFrame("FFC")
+    val frame = JFrame("FFC AirSync | v${BuildConfig.VERSION}")
 
     init {
         frame.iconImages = listOf<Image>(
-                ImageIO.read(javaClass.classLoader.getResource("icon/512x512.png"))
+            ImageIO.read(javaClass.classLoader.getResource("icon/192x192.png")),
+            ImageIO.read(javaClass.classLoader.getResource("icon/144x144.png")),
+            ImageIO.read(javaClass.classLoader.getResource("icon/96x96.png"))
         )
         frame.isUndecorated = true
         frame.setSize(800, 480)
