@@ -6,7 +6,7 @@ import javax.swing.JFrame
 
 class SplashScreenFrame : Ui {
 
-    val splashScreen: SplashScreen = SplashScreen()
+    val panel: SplashPanel = SplashPanel()
     val frame = JFrame("FFC AirSync | v${BuildConfig.VERSION}")
 
     init {
@@ -16,12 +16,12 @@ class SplashScreenFrame : Ui {
             ImageIO.read(javaClass.classLoader.getResource("icon/96x96.png"))
         )
         frame.isUndecorated = true
-        frame.setSize(800, 480)
-        frame.contentPane = splashScreen.panel
+        frame.setSize(1440, 900)
+        frame.contentPane = panel
         frame.setLocationRelativeTo(null)
         frame.isVisible = true
 
-        splashScreen.versionLabel.text = "v${BuildConfig.VERSION}"
+        panel.versionText.text = "v${BuildConfig.VERSION}"
     }
 
     override fun show() {
@@ -35,15 +35,16 @@ class SplashScreenFrame : Ui {
     override fun updateProgress(progress: Int?, max: Int?, message: String) {
         if (progress != null && max != null) {
             require(progress <= max) { "progress [$progress] must lower or equal max [$max]" }
-            splashScreen.progressBar.maximum = max
-            splashScreen.progressBar.value = progress
+            panel.progressBar.maximum = max
+            panel.progressBar.value = progress
         }
-        splashScreen.progressText.text = message
+        panel.progressText.text = message
+        panel.revalidate()
     }
 
     override var text: String
-        get() = splashScreen.progressTitle.text
+        get() = "" //panel.progressTitle.text
         set(value) {
-            splashScreen.progressTitle.text = value
+            panel.progressText.text = value
         }
 }
