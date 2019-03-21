@@ -7,7 +7,8 @@ import javax.swing.JFrame
 class SplashScreenFrame : Ui {
 
     val panel: SplashPanel = SplashPanel()
-    val frame = JFrame("FFC AirSync | v${BuildConfig.VERSION}")
+    val header = "FFC AirSync |"
+    val frame = JFrame(header)
 
     init {
         frame.iconImages = listOf<Image>(
@@ -38,13 +39,11 @@ class SplashScreenFrame : Ui {
             panel.progressBar.maximum = max
             panel.progressBar.value = progress
         }
-        panel.progressText.text = message
-        panel.revalidate()
     }
 
     override var text: String
-        get() = "" //panel.progressTitle.text
+        get() = ""
         set(value) {
-            panel.progressText.text = value
+            frame.title = "$header $value"
         }
 }
