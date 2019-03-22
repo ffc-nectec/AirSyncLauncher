@@ -22,7 +22,7 @@ import javax.swing.JFrame
 class SplashScreenFrame : Ui {
 
     val panel: SplashPanel = SplashPanel()
-    val header = "FFC AirSync |"
+    val header = "FFC AirSync Launcher"
     val frame = JFrame(header)
 
     init {
@@ -59,6 +59,6 @@ class SplashScreenFrame : Ui {
     override var text: String
         get() = ""
         set(value) {
-            frame.title = "$header $value"
+            frame.title = "$header | $value"
         }
 }
