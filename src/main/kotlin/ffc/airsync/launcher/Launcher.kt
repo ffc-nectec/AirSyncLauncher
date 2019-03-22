@@ -38,7 +38,7 @@ internal class Launcher constructor(val args: Array<String>) {
             stampLauncherVersion(appFolder)
             checkDuplicateProcess()
             checkAirSyncVersion(appFolder)
-            ui.text = "เรียกใช้งานโปรแกรม"
+            ui.text = "เข้าสู่โปรแกรม FFC AirSync"
             launchAirSync(appFolder)
             ui.dispose()
             System.exit(0)

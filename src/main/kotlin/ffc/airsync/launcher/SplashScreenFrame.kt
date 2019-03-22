@@ -32,7 +32,7 @@ class SplashScreenFrame : Ui {
             ImageIO.read(javaClass.classLoader.getResource("icon/96x96.png"))
         )
         frame.isUndecorated = true
-        frame.setSize(1440, 900)
+        frame.setSize(720, 450)
         frame.contentPane = panel
         frame.setLocationRelativeTo(null)
         frame.isVisible = true
