@@ -30,7 +30,11 @@ matrix:
 
 artifacts:
   - path: build/launch4j/ffc-airsync.exe
-    name: ffc-airsync client
+    name: ffc-airsync launcher
+    type: File
+
+  - path: build/launch4j/ffc-airsync-installer.exe
+    name: ffc-airsync installer
     type: File
 
   - path: ffc-airsync.zip
