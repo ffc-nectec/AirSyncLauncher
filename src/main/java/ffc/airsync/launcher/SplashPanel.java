@@ -29,7 +29,7 @@ public class SplashPanel extends javax.swing.JPanel {
      * Creates new form SplashPanel
      */
     public SplashPanel() {
-        backgroud = new ImageIcon(getClass().getClassLoader().getResource("launcher_bg.jpg")).getImage();
+        backgroud = new ImageIcon(getClass().getClassLoader().getResource("bg/720p.jpg")).getImage();
         initComponents();
     }
 
