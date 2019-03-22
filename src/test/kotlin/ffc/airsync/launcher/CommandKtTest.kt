@@ -15,23 +15,21 @@
 
 package ffc.airsync.launcher
 
+import org.junit.Test
+
 import java.io.File
 
-private const val jarName = "airsync.jar"
+class CommandKtTest {
 
-fun cmdCheckAirSyncVersion(dir: File): String {
-    val jarFile = File(dir, jarName)
-    return "java -jar \"${jarFile.absolutePath}\" -v"
-}
+    val dir = File(System.getenv("APPDATA"))
 
-fun cmdLaunchAirSync(dir: File): String {
-    val jarFile = File(dir, jarName)
-    return "cmd /k start javaw -Xms1G -Xmx3G -jar -Dfile.encoding=UTF-8 " +
-        "-jar \"${jarFile.absolutePath}\""
-}
+    @Test
+    fun cmdLaunchAirSync() {
+        println(ffc.airsync.launcher.cmdLaunchAirSync(dir))
+    }
 
-fun cmdLaunchAirSyncX64(dir: File): String {
-    val jarFile = File(dir, jarName)
-    return "cmd /k start javaw -d64 -Xms1G -Xmx4G -jar -Dfile.encoding=UTF-8 " +
-        "-jar \"${jarFile.absolutePath}\""
+    @Test
+    fun cmdLaunchAirSyncX64() {
+        println(ffc.airsync.launcher.cmdLaunchAirSyncX64(dir))
+    }
 }
