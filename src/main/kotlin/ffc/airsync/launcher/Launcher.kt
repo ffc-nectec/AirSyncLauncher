@@ -20,7 +20,6 @@ import max.githubapi.GitHubLatestApi
 import max.java.c64support.CheckJava64BitSupportWithCommand
 import max.kotlin.checkdupp.CheckDupplicateWithRest
 import max.kotlin.checkdupp.DupplicateProcessException
-import max.windows.createlink.CreateLink
 import java.io.File
 import java.io.FileWriter
 import java.net.URL
@@ -33,14 +32,13 @@ internal class Launcher constructor(val args: Array<String>) {
     fun run() {
         try {
             ui.show()
-            ui.text = "กำหนดค่าตั้งต้น"
+            ui.text = "ตรวจสอบสถานะ"
             val appFolder = prepareAppFolder()
             createStartupLink(appFolder)
             stampLauncherVersion(appFolder)
             checkDuplicateProcess()
-            ui.text = "ตรวจสอบเวอร์ชั่น"
             checkAirSyncVersion(appFolder)
-            ui.text = ""
+            ui.text = "เรียกใช้งานโปรแกรม"
             launchAirSync(appFolder)
             ui.dispose()
             System.exit(0)
@@ -62,26 +60,29 @@ internal class Launcher constructor(val args: Array<String>) {
         return appFolder
     }
 
-    private fun createStartupLink(appFolder: File) {
-        ui.updateProgress(1, 10, "สร้างลิงค์เชื่อมต่อโปรแกรม")
-        val exeFile = File(appFolder, "ffc-airsync.exe")
-        val link = CreateLink(exeFile)
-        val startupFile = FileWriter(File(link.userWindowsStartupPath + "ffc-airsync.bat"), false)
+    private fun createStartupLink(appDir: File) {
+        ui.updateProgress(1, 100, "สร้างลิงค์เชื่อมต่อโปรแกรม")
+        val startupDir = File(
+            System.getProperty("user.home"),
+            "AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
+        )
+        val startupFile = FileWriter(File(startupDir, "ffc-airsync.bat"), false)
 
+        val exeFile = File(appDir, "ffc-airsync.exe")
         startupFile.write("\"${exeFile.absolutePath}\"")
         startupFile.flush()
         startupFile.close()
     }
 
-    private fun stampLauncherVersion(file: File) {
-        ui.updateProgress(2, 10, "บันทึกเวอร์ชั่นปัจจุบัน")
-        val fw = FileWriter(File(file, "launcher.version"))
+    private fun stampLauncherVersion(appDir: File) {
+        ui.updateProgress(2, 100, "บันทึกเวอร์ชั่นปัจจุบัน")
+        val fw = FileWriter(File(appDir, "launcher.version"))
         fw.write(BuildConfig.VERSION)
         fw.close()
     }
 
     private fun checkDuplicateProcess() {
-        ui.updateProgress(3, 10, "ตรวจสอบสถานะโปรเสจ")
+        ui.updateProgress(3, 100, "ตรวจสอบสถานะโปรเสจ")
         try {
             CheckDupplicateWithRest("airsync").register()
         } catch (ex: DupplicateProcessException) {
@@ -90,9 +91,9 @@ internal class Launcher constructor(val args: Array<String>) {
         }
     }
 
-    private fun checkAirSyncVersion(appFolder: File) {
-        ui.updateProgress(message = "")
-        val proc = Runtime.getRuntime().exec(cmdCheckAirSyncVersion(appFolder))
+    private fun checkAirSyncVersion(appDir: File) {
+        ui.updateProgress(message = "ตรวจสอบเวอร์ชั่น")
+        val proc = Runtime.getRuntime().exec(cmdCheckAirSyncVersion(appDir))
         val localVersion = proc.inputStream.reader().readText()
         val release = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
 
@@ -109,15 +110,15 @@ internal class Launcher constructor(val args: Array<String>) {
 
                 ui.updateProgress(progress.takeIf { it <= 100 } ?: 100, 100, loadingMessage)
             }
-            zip.download(appFolder)
+            zip.download(appDir)
         }
         ui.updateProgress(100, 100, "เวอร์ชั่นใหม่ล่าสุดแล้ว")
     }
 
-    private fun launchAirSync(appFolder: File) {
+    private fun launchAirSync(appDir: File) {
         if (CheckJava64BitSupportWithCommand().is64Support())
-            Runtime.getRuntime().exec(cmdLaunchAirSyncX64(appFolder))
+            Runtime.getRuntime().exec(cmdLaunchAirSyncX64(appDir))
         else
-            Runtime.getRuntime().exec(cmdLaunchAirSync(appFolder))
+            Runtime.getRuntime().exec(cmdLaunchAirSync(appDir))
     }
 }
