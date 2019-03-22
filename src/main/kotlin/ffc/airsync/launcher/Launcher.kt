@@ -85,7 +85,6 @@ internal class Launcher constructor(val args: Array<String>) {
         startupFile.close()
     }
 
-
     private fun checkAirSyncVersion(appDir: File) {
         ui.updateProgress(message = "ตรวจสอบเวอร์ชั่น")
         val proc = Runtime.getRuntime().exec(cmdCheckAirSyncVersion(appDir))
