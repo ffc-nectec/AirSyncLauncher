@@ -33,16 +33,21 @@ class SelfUpdate(dir: File) {
     private val exeFile = File(dir, "ffc-airsync.exe")
 
     init {
-        stampCurrentVersion()
+        stampCurrentVersion(BuildConfig.VERSION)
         if (replaceFlag.exists()) {
             newVersion.delete()
             replaceFlag.delete()
         }
+        if (!exeFile.exists()) { // first time start by installer
+            val release = GitHubLatestApi("ffc-nectec/airsync-launcher").getLastRelease()
+            release.downloadExeFile(exeFile)
+            stampCurrentVersion(release.tag_name)
+        }
     }
 
-    private fun stampCurrentVersion() {
+    private fun stampCurrentVersion(version: String) {
         val fw = FileWriter(currentVersion)
-        fw.write(BuildConfig.VERSION)
+        fw.write(version)
         fw.close()
     }
 
@@ -76,10 +81,6 @@ class SelfUpdate(dir: File) {
         if (release.tag_name != currentVersion) {
             release.downloadExeFile(newVersion)
             return newVersion
-        } else if (!exeFile.exists()) {
-            // first time start by installer
-            // ffc-airsync.jar need admin permission at first time
-            release.downloadExeFile(exeFile)
         }
         return null
     }
