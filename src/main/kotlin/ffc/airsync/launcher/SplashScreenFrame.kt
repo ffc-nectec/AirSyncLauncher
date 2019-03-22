@@ -21,9 +21,9 @@ import javax.swing.JFrame
 
 class SplashScreenFrame : Ui {
 
-    val panel: SplashPanel = SplashPanel()
-    val header = "FFC AirSync Launcher"
-    val frame = JFrame(header)
+    private val panel = SplashPanel()
+    private val header = "FFC AirSync Launcher"
+    private val frame = JFrame(header)
 
     init {
         frame.iconImages = listOf<Image>(
