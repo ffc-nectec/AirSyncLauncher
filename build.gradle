@@ -101,5 +101,5 @@ task createInstaller(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
     copyright = "Apache License 2.0"
 }
 
-build.dependsOn createExe
-build.dependsOn createInstaller
+assemble.dependsOn createExe
+assemble.dependsOn createInstaller
