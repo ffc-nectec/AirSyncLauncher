@@ -59,7 +59,7 @@ class SelfUpdate(dir: File) {
         } else {
             // restart to newer version tmp if available
             downloadLatest()?.let {
-                Runtime.getRuntime().exec(it.absolutePath)
+                Runtime.getRuntime().exec("\"${it.absolutePath}\"")
                 exitProcess(0)
             }
         }
@@ -71,7 +71,7 @@ class SelfUpdate(dir: File) {
         Files.copy(newVersion.inputStream(), Paths.get(exeFile.absolutePath))
         replaceFlag.createNewFile()
 
-        Runtime.getRuntime().exec(exeFile.absolutePath)
+        Runtime.getRuntime().exec("\"${exeFile.absolutePath}\"")
         exitProcess(0)
     }
 
