@@ -16,30 +16,30 @@ package ffc.airsync.launcher;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * @author piruin
  */
 public class SplashPanel extends javax.swing.JPanel {
 
-    private static Image backgroud;
-    boolean painted = false;
+    private Image backgroud;
+    private Font font;
 
     /**
      * Creates new form SplashPanel
      */
-    public SplashPanel() {
-        backgroud = new ImageIcon(getClass().getClassLoader().getResource("bg/720p.jpg")).getImage();
+    public SplashPanel() throws IOException, FontFormatException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        backgroud = new ImageIcon(classLoader.getResource("bg/720p.jpg")).getImage();
+        font = Font.createFont(Font.TRUETYPE_FONT, classLoader.getResource("font/Kanit-Light.ttf").openStream()).deriveFont(12f);
         initComponents();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (!painted) {
-            g.drawImage(backgroud, 0, 0, null);
-            painted = true;
-        }
+        g.drawImage(backgroud, 0, 0, this);
     }
 
     /**
@@ -55,7 +55,8 @@ public class SplashPanel extends javax.swing.JPanel {
         versionText = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(76, 189, 148));
-        setPreferredSize(new java.awt.Dimension(1440, 900));
+        setMaximumSize(new java.awt.Dimension(720, 450));
+        setPreferredSize(new java.awt.Dimension(720, 450));
 
         progressBar.setBackground(new Color(0,0,0,0));
         progressBar.setForeground(new java.awt.Color(255, 255, 255));
@@ -65,6 +66,7 @@ public class SplashPanel extends javax.swing.JPanel {
         progressBar.setRequestFocusEnabled(false);
 
         versionText.setBackground(new java.awt.Color(0, 0, 0));
+        versionText.setFont(font);
         versionText.setForeground(new java.awt.Color(255, 255, 255));
         versionText.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         versionText.setText("jLabel1");
@@ -73,24 +75,21 @@ public class SplashPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap(159, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(327, 327, 327)
-                        .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 1054, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(58, 58, 58)
-                        .addComponent(versionText)))
-                .addContainerGap(59, Short.MAX_VALUE))
+                    .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(versionText))
+                    .addGap(25, 25, 25))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(31, 31, 31)
                 .addComponent(versionText)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 784, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 356, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(72, 72, 72))
+                .addGap(41, 41, 41))
         );
     }// </editor-fold>//GEN-END:initComponents
 
