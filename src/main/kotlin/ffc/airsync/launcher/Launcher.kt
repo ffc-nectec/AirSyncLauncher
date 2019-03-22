@@ -97,7 +97,6 @@ internal class Launcher constructor(val args: Array<String>) {
         val localVersion = proc.inputStream.reader().readText()
         val release = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
 
-        print("airsync $localVersion, github ${release.tag_name}")
         if (localVersion != release.tag_name) {
             ui.text = "ปรับปรุงเวอร์ชั่น"
             val assertInstall = release.assets.find { it.name == "airsync.zip" }!!
