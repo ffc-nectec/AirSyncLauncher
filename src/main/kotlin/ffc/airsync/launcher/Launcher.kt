@@ -34,15 +34,16 @@ internal class Launcher constructor(val args: Array<String>) {
             ui.show()
             ui.text = "ตรวจสอบสถานะ"
             val appFolder = prepareAppFolder()
-            createStartupLink(appFolder)
-            stampLauncherVersion(appFolder)
             checkDuplicateProcess()
+            SelfUpdate(appFolder).checkForUpdate()
+            createStartupLink(appFolder)
             checkAirSyncVersion(appFolder)
             ui.text = "เข้าสู่โปรแกรม FFC AirSync"
             launchAirSync(appFolder)
             ui.dispose()
             System.exit(0)
         } catch (exception: Throwable) {
+            exception.printStackTrace()
             ui.dispose()
             JOptionPane.showMessageDialog(
                 null,
@@ -60,8 +61,18 @@ internal class Launcher constructor(val args: Array<String>) {
         return appFolder
     }
 
+    private fun checkDuplicateProcess() {
+        ui.updateProgress(1, 100, "ตรวจสอบสถานะโปรเสจ")
+        try {
+            CheckDupplicateWithRest("airsync").register()
+        } catch (ex: DupplicateProcessException) {
+            ui.dispose()
+            System.exit(1)
+        }
+    }
+
     private fun createStartupLink(appDir: File) {
-        ui.updateProgress(1, 100, "สร้างลิงค์เชื่อมต่อโปรแกรม")
+        ui.updateProgress(3, 100, "สร้างลิงค์เชื่อมต่อโปรแกรม")
         val startupDir = File(
             System.getProperty("user.home"),
             "AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
@@ -74,22 +85,6 @@ internal class Launcher constructor(val args: Array<String>) {
         startupFile.close()
     }
 
-    private fun stampLauncherVersion(appDir: File) {
-        ui.updateProgress(2, 100, "บันทึกเวอร์ชั่นปัจจุบัน")
-        val fw = FileWriter(File(appDir, "launcher.version"))
-        fw.write(BuildConfig.VERSION)
-        fw.close()
-    }
-
-    private fun checkDuplicateProcess() {
-        ui.updateProgress(3, 100, "ตรวจสอบสถานะโปรเสจ")
-        try {
-            CheckDupplicateWithRest("airsync").register()
-        } catch (ex: DupplicateProcessException) {
-            ui.dispose()
-            System.exit(1)
-        }
-    }
 
     private fun checkAirSyncVersion(appDir: File) {
         ui.updateProgress(message = "ตรวจสอบเวอร์ชั่น")
