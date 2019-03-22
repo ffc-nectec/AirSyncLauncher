@@ -67,7 +67,12 @@ internal class Launcher constructor(val args: Array<String>) {
             CheckDupplicateWithRest("airsync").register()
         } catch (ex: DupplicateProcessException) {
             ui.dispose()
-            System.exit(1)
+            JOptionPane.showMessageDialog(
+                null,
+                "Already started",
+                "FFC AirSync Launcher",
+                JOptionPane.WARNING_MESSAGE
+            )
         }
     }
 
