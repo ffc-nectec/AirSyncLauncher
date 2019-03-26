@@ -92,25 +92,33 @@ internal class Launcher constructor(val args: Array<String>) {
 
     private fun checkAirSyncVersion(appDir: File) {
         ui.updateProgress(message = "ตรวจสอบเวอร์ชั่น")
-        val proc = Runtime.getRuntime().exec(cmdCheckAirSyncVersion(appDir))
-        val localVersion = proc.inputStream.reader().readText()
-        val release = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
+        try {
+            val proc = Runtime.getRuntime().exec(cmdCheckAirSyncVersion(appDir))
+            val localVersion = proc.inputStream.reader().readText()
+            val release = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
 
-        if (localVersion != release.tag_name) {
-            ui.text = "ปรับปรุงเวอร์ชั่น"
-            val assertInstall = release.assets.find { it.name == "airsync.zip" }!!
-            val loadingMessage = "ดาวน์โหลดเวอร์ชั่น ${release.tag_name}"
-            ui.updateProgress(0, 100, loadingMessage)
-
-            val urlZip = URL(assertInstall.browser_download_url)
-            val zip = ZIpDownload(urlZip) { size: Double ->
-                val progress = ((size / assertInstall.size) * 100).toInt()
-
-                ui.updateProgress(progress.takeIf { it <= 100 } ?: 100, 100, loadingMessage)
+            if (localVersion != release.tag_name) {
+                ui.text = "ปรับปรุงเวอร์ชั่น"
+                val assertInstall = release.assets.find { it.name == "airsync.zip" }!!
+                val loadingMessage = "ดาวน์โหลดเวอร์ชั่น ${release.tag_name}"
+                ui.updateProgress(0, 100, loadingMessage)
+                val urlZip = URL(assertInstall.browser_download_url)
+                val zip = ZIpDownload(urlZip) { size: Double ->
+                    val progress = ((size / assertInstall.size) * 100).toInt()
+                    ui.updateProgress(progress.takeIf { it <= 100 } ?: 100, 100, loadingMessage)
+                }
+                zip.download(appDir)
             }
-            zip.download(appDir)
+            ui.updateProgress(100, 100, "เวอร์ชั่นใหม่ล่าสุดแล้ว")
+        } catch (exception: Throwable) {
+            val jarFile = File(appDir, "airsync.jar")
+            if (!jarFile.exists()) {
+                throw IllegalStateException("ไม่สามารถติดตั้ง FFC Airsync ได้\nกรุณาตรวจสอบอินเตอร์เน็ต", exception)
+            } else {
+                exception.printStackTrace()
+                ui.updateProgress(100, 100, "ไม่สามารถตรวจสอบเวอร์ชั่นใหม่ได้")
+            }
         }
-        ui.updateProgress(100, 100, "เวอร์ชั่นใหม่ล่าสุดแล้ว")
     }
 
     private fun launchAirSync(appDir: File) {
