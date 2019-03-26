@@ -17,13 +17,13 @@ package ffc.airsync.launcher
 
 import max.download.zip.ZIpDownload
 import max.githubapi.GitHubLatestApi
-import max.java.c64support.CheckJava64BitSupportWithCommand
 import max.kotlin.checkdupp.CheckDupplicateWithRest
 import max.kotlin.checkdupp.DupplicateProcessException
 import java.io.File
 import java.io.FileWriter
 import java.net.URL
 import javax.swing.JOptionPane
+import kotlin.system.exitProcess
 
 internal class Launcher constructor(val args: Array<String>) {
 
@@ -41,7 +41,7 @@ internal class Launcher constructor(val args: Array<String>) {
             ui.text = "เข้าสู่โปรแกรม FFC AirSync"
             launchAirSync(appFolder)
             ui.dispose()
-            System.exit(0)
+            exitProcess(0)
         } catch (exception: Throwable) {
             exception.printStackTrace()
             ui.dispose()
@@ -69,7 +69,7 @@ internal class Launcher constructor(val args: Array<String>) {
             ui.dispose()
             JOptionPane.showMessageDialog(
                 null,
-                "Already started",
+                "พบ FFC AirSync ทำงานอยู่แล้ว",
                 "FFC AirSync Launcher",
                 JOptionPane.WARNING_MESSAGE
             )
@@ -93,8 +93,7 @@ internal class Launcher constructor(val args: Array<String>) {
     private fun checkAirSyncVersion(appDir: File) {
         ui.updateProgress(message = "ตรวจสอบเวอร์ชั่น")
         try {
-            val proc = Runtime.getRuntime().exec(cmdCheckAirSyncVersion(appDir))
-            val localVersion = proc.inputStream.reader().readText()
+            val localVersion = currentAirSyncVersion(appDir)
             val release = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
 
             if (localVersion != release.tag_name) {
@@ -121,10 +120,20 @@ internal class Launcher constructor(val args: Array<String>) {
         }
     }
 
+    private fun currentAirSyncVersion(appDir: File): String {
+        try {
+            val proc = exec(cmdCheckAirSyncVersion(appDir))
+            val localVersion = proc.inputStream.reader().readText()
+            return localVersion
+        } catch (notFound: Throwable) {
+            return "unspecified"
+        }
+    }
+
     private fun launchAirSync(appDir: File) {
-        if (CheckJava64BitSupportWithCommand().is64Support())
-            Runtime.getRuntime().exec(cmdLaunchAirSyncX64(appDir))
+        if (runtime.is64bit)
+            exec(if (runtime.is64bit) cmdLaunchAirSyncX64(appDir) else cmdLaunchAirSync(appDir))
         else
-            Runtime.getRuntime().exec(cmdLaunchAirSync(appDir))
+            exec(cmdLaunchAirSync(appDir))
     }
 }

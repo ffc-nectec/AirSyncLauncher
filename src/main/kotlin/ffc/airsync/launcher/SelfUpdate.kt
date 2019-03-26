@@ -58,14 +58,14 @@ class SelfUpdate(dir: File) {
             Thread.sleep(3000) // make sure process was released
             exeFile.replaceWith(newExeFile) {
                 replaceFlag.createNewFile()
-                Runtime.getRuntime().exec("\"${exeFile.absolutePath}\"")
+                exec(exeFile)
                 exitProcess(0)
             }
         } else {
             try {
                 getNewerVersion()?.let {
                     // restart to newer version tmp
-                    Runtime.getRuntime().exec("\"${it.absolutePath}\"")
+                    exec(it)
                     exitProcess(0)
                 }
             } catch (ignore: Throwable) {
