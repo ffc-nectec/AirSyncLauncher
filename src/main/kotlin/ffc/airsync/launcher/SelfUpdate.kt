@@ -28,14 +28,15 @@ import kotlin.system.exitProcess
 class SelfUpdate(dir: File) {
 
     private val replaceFlag = File(dir, "replace.flag")
-    private val currentVersion = File(dir, "launcher.version")
-    private val newVersion = File(dir, "tmp-ffc-airsync.exe")
+    private val currentVersionFlag = File(dir, "launcher.version")
+
+    private val newExeFile = File(dir, "tmp-ffc-airsync.exe")
     private val exeFile = File(dir, "ffc-airsync.exe")
 
     init {
         stampCurrentVersion(BuildConfig.VERSION)
         if (replaceFlag.exists()) {
-            newVersion.delete()
+            newExeFile.delete()
             replaceFlag.delete()
         }
         if (!exeFile.exists()) { // first time start by installer
@@ -46,41 +47,45 @@ class SelfUpdate(dir: File) {
     }
 
     private fun stampCurrentVersion(version: String) {
-        val fw = FileWriter(currentVersion)
+        val fw = FileWriter(currentVersionFlag)
         fw.write(version)
         fw.close()
     }
 
     fun checkForUpdate() {
-        if (newVersion.exists()) {
+        if (newExeFile.exists()) {
             // already download newer version
             Thread.sleep(3000) // make sure process was released
-            replace()
-        } else {
-            // restart to newer version tmp if available
-            downloadLatest()?.let {
-                Runtime.getRuntime().exec("\"${it.absolutePath}\"")
+            exeFile.replaceWith(newExeFile) {
+                replaceFlag.createNewFile()
+                Runtime.getRuntime().exec("\"${exeFile.absolutePath}\"")
                 exitProcess(0)
+            }
+        } else {
+            try {
+                getNewerVersion()?.let {
+                    // restart to newer version tmp
+                    Runtime.getRuntime().exec("\"${it.absolutePath}\"")
+                    exitProcess(0)
+                }
+            } catch (ignore: Throwable) {
+                ignore.printStackTrace()
             }
         }
     }
 
-    private fun replace() {
-        if (exeFile.exists())
-            exeFile.delete()
-        Files.copy(newVersion.inputStream(), Paths.get(exeFile.absolutePath))
-        replaceFlag.createNewFile()
-
-        Runtime.getRuntime().exec("\"${exeFile.absolutePath}\"")
-        exitProcess(0)
+    fun File.replaceWith(file: File, onFinish: () -> Unit) {
+        if (exists())
+            delete()
+        Files.copy(file.inputStream(), Paths.get(absolutePath))
     }
 
-    private fun downloadLatest(): File? {
-        val currentVersion = currentVersion.readText()
+    private fun getNewerVersion(): File? {
+        val currentVersion = currentVersionFlag.readText()
         val release = GitHubLatestApi("ffc-nectec/airsync-launcher").getLastRelease()
         if (release.tag_name != currentVersion) {
-            release.downloadExeFile(newVersion)
-            return newVersion
+            release.downloadExeFile(newExeFile)
+            return newExeFile
         }
         return null
     }
