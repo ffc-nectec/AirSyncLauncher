@@ -51,6 +51,7 @@ internal class Launcher constructor(val args: Array<String>) {
                 "FFC AirSync Launcher",
                 JOptionPane.ERROR_MESSAGE
             )
+            exitProcess(500)
         }
     }
 
@@ -66,13 +67,7 @@ internal class Launcher constructor(val args: Array<String>) {
         try {
             CheckDupplicateWithRest("airsync").register()
         } catch (ex: DupplicateProcessException) {
-            ui.dispose()
-            JOptionPane.showMessageDialog(
-                null,
-                "พบ FFC AirSync ทำงานอยู่แล้ว",
-                "FFC AirSync Launcher",
-                JOptionPane.WARNING_MESSAGE
-            )
+            throw DupplicateProcessException("พบ FFC AirSync ทำงานอยู่แล้ว")
         }
     }
 
