@@ -74,10 +74,11 @@ class SelfUpdate(dir: File) {
         }
     }
 
-    fun File.replaceWith(file: File, onFinish: () -> Unit) {
+    private fun File.replaceWith(file: File, onFinish: () -> Unit) {
         if (exists())
             delete()
         Files.copy(file.inputStream(), Paths.get(absolutePath))
+        onFinish()
     }
 
     private fun getNewerVersion(): File? {
