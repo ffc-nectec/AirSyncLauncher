@@ -15,6 +15,8 @@
 package ffc.airsync.launcher
 
 import max.java.c64support.CheckJava64BitSupportWithCommand
+import org.apache.logging.log4j.kotlin.KotlinLogger
+import org.apache.logging.log4j.kotlin.logger
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
@@ -48,4 +50,8 @@ fun URL.download(dest: File) {
         Paths.get(dest.absolutePath),
         StandardCopyOption.REPLACE_EXISTING
     )
+}
+
+inline fun <reified T> getLogger(clazz: T): KotlinLogger {
+    return logger(T::class.java.simpleName)
 }
