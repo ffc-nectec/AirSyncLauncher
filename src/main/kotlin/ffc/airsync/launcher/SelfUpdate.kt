@@ -22,9 +22,12 @@ import java.io.FileWriter
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import kotlin.system.exitProcess
 
+/**
+ * ตรวจสอบการ update airsync โดยจะตรวจสอบ version ล่าสุดให้เอง
+ * @param dir ไดเรกทอรี่ ที่จะทำการติดตั้ง airsync
+ */
 class SelfUpdate(dir: File) {
 
     private val replaceFlag = File(dir, "replace.flag")
@@ -93,7 +96,6 @@ class SelfUpdate(dir: File) {
 
     private fun GithubRelease.downloadExeFile(dest: File) {
         val url = assets.find { it.name == "ffc-airsync.exe" }?.browser_download_url
-        val input = URL(url).openStream()
-        Files.copy(input, Paths.get(dest.absolutePath), StandardCopyOption.REPLACE_EXISTING)
+        URL(url).download(dest)
     }
 }

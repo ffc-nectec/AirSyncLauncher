@@ -16,6 +16,10 @@ package ffc.airsync.launcher
 
 import max.java.c64support.CheckJava64BitSupportWithCommand
 import java.io.File
+import java.net.URL
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 val runtime: Runtime
     get() = Runtime.getRuntime()
@@ -27,3 +31,21 @@ fun exec(file: File) = runtime.exec("\"${file.absolutePath}\"")
 @Suppress("unused")
 val Runtime.is64bit
     get() = CheckJava64BitSupportWithCommand().is64Support()
+
+val HOME_USER: String get() = System.getProperty("user.home")
+val FFC_HOME: String?
+    get() {
+        val property = System.getProperty("FFC_HOME")
+        return if (property != null)
+            return property
+        else
+            System.getenv("FFC_HOME")
+    }
+
+fun URL.download(dest: File) {
+    Files.copy(
+        openStream(),
+        Paths.get(dest.absolutePath),
+        StandardCopyOption.REPLACE_EXISTING
+    )
+}
