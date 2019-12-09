@@ -15,6 +15,7 @@
 
 package ffc.airsync.launcher
 
+import ffc.airsync.launcher.jredownload.JreSetup
 import max.download.zip.ZIpDownload
 import max.githubapi.GitHubLatestApi
 import max.kotlin.checkdupp.CheckDupplicateWithRest
@@ -28,18 +29,38 @@ import kotlin.system.exitProcess
 internal class Launcher constructor(val args: Array<String>) {
 
     private val ui: Ui = SplashScreenFrame()
+    private val logger = getLogger(this)
 
     fun run() {
         try {
             ui.show()
             ui.text = "ตรวจสอบสถานะ"
-            val appFolder = prepareAppFolder()
+            logger.info { "Setup FFC_HOME" }
+            if (FFC_HOME.isNullOrBlank())
+                SetupFFC_HOME().setup()
+            val appFolder = File(FFC_HOME!!)
+            val jreSetup = JreSetup(appFolder)
+            logger.info { "Check jre install." }
+            if (!jreSetup.isJavaInstall()) { // ถ้ายังไม่ได้ติดตั้ง jre ให้ติดตั้ง jre ตัวพื้นฐานก่อน
+                logger.info { "Install jre base." }
+                jreSetup.InstallJre(
+                    "https://github.com/" +
+                        "AdoptOpenJDK/openjdk8-binaries/" +
+                        "releases/download/jdk8u232-b09/OpenJDK8U-jre_x64_windows_hotspot_8u232b09.zip"
+                )
+            }
             checkDuplicateProcess()
+            logger.info { "Check launcher update" }
             SelfUpdate(appFolder).checkForUpdate()
+            logger.info { "Create startup link." }
             createStartupLink(appFolder)
+            logger.info { "Check airsync update." }
             checkAirSyncVersion(appFolder)
+            logger.info { "Check jre compat version" }
+            jreSetup.setupCompatVersion()
             ui.text = "เข้าสู่โปรแกรม FFC AirSync"
-            launchAirSync(appFolder)
+            logger.info { "Lunch airsync" }
+            exec(cmdLaunchAirSync())
             ui.dispose()
             exitProcess(0)
         } catch (exception: Throwable) {
@@ -53,13 +74,6 @@ internal class Launcher constructor(val args: Array<String>) {
             )
             exitProcess(500)
         }
-    }
-
-    private fun prepareAppFolder(): File {
-        val root = System.getenv("APPDATA") ?: HOME_USER + "\\AppData\\Roaming"
-        val appFolder = File(root, "FFC")
-        appFolder.mkdirs()
-        return appFolder
     }
 
     private fun checkDuplicateProcess() {
@@ -116,19 +130,12 @@ internal class Launcher constructor(val args: Array<String>) {
     }
 
     private fun currentAirSyncVersion(appDir: File): String {
-        try {
-            val proc = exec(cmdCheckAirSyncVersion(appDir))
+        return try {
+            val proc = exec(cmdCheckAirSyncVersion())
             val localVersion = proc.inputStream.reader().readText()
-            return localVersion
+            localVersion
         } catch (notFound: Throwable) {
-            return "unspecified"
+            "unspecified"
         }
-    }
-
-    private fun launchAirSync(appDir: File) {
-        if (runtime.is64bit)
-            exec(cmdLaunchAirSyncX64(appDir))
-        else
-            exec(cmdLaunchAirSync(appDir))
     }
 }
