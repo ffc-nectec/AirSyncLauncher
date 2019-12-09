@@ -5,7 +5,7 @@
             <PatternLayout pattern="%d %-5p [%t] %-5c{1} - %m%n" charset="UTF-8"/>
         </Console>
 
-        <RollingFile name="RollingFile" fileName="log/ffc-airsync-launcher.log"
+        <RollingFile name="RollingFile" fileName="ffc-install-log/ffc-airsync-launcher.log"
                      filePattern="log/ffc-airsync.%d{dd-MMM-yyyy-HH:mm}.%i.log.gz">
             <PatternLayout>
                 <pattern>%d %-5p [%t] %-5c{1} - %m%n</pattern>

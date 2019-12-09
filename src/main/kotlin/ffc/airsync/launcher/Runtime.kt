@@ -34,7 +34,6 @@ fun exec(file: File) = runtime.exec("\"${file.absolutePath}\"")
 val Runtime.is64bit
     get() = CheckJava64BitSupportWithCommand().is64Support()
 
-val HOME_USER: String get() = System.getProperty("user.home")
 val FFC_HOME: String?
     get() {
         val property = System.getProperty("FFC_HOME")

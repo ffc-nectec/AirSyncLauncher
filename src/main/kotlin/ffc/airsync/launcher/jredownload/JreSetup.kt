@@ -12,18 +12,32 @@ class JreSetup(airsyncPath: File) {
     private val localVersionFile = File(airsyncPath, "jre/jreVersion.txt")
     private val compatVersionFile = File(airsyncPath, "jreVersion.txt")
 
-    fun setup() {
+    fun setupCompatVersion() {
         val localVersion = readJreLocalVersion()
         val compatVersion = readJreCompatVersion() ?: return
         if (localVersion == compatVersion) return
 
-        downloadZipAndExtract(compatVersion)
-        moveTempToAirsyncJre()
+        InstallJre(compatVersion)
         stampVersion()
 
         logger.debug { "Jre local version $localVersion" }
         logger.debug { "Jre compat version $compatVersion" }
     }
+
+    fun InstallJre(compatVersion: String) {
+        downloadZipAndExtract(compatVersion)
+        moveTempToAirsyncJre()
+    }
+
+    fun getJavaPath(): File? {
+        val javaPath = File(destJre, "bin")
+        return if (javaPath.isDirectory)
+            javaPath
+        else
+            null
+    }
+
+    fun isJavaInstall(): Boolean = File(destJre, "bin/javaw.exe").isFile
 
     private fun readJreCompatVersion(): String? {
         return if (compatVersionFile.isFile)
