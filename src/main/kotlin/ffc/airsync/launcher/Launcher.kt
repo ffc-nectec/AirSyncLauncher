@@ -56,7 +56,7 @@ internal class Launcher constructor(val args: Array<String>) {
     }
 
     private fun prepareAppFolder(): File {
-        val root = System.getenv("APPDATA") ?: System.getProperty("user.home") + "\\AppData\\Roaming"
+        val root = System.getenv("APPDATA") ?: HOME_USER + "\\AppData\\Roaming"
         val appFolder = File(root, "FFC")
         appFolder.mkdirs()
         return appFolder
@@ -127,7 +127,7 @@ internal class Launcher constructor(val args: Array<String>) {
 
     private fun launchAirSync(appDir: File) {
         if (runtime.is64bit)
-            exec(if (runtime.is64bit) cmdLaunchAirSyncX64(appDir) else cmdLaunchAirSync(appDir))
+            exec(cmdLaunchAirSyncX64(appDir))
         else
             exec(cmdLaunchAirSync(appDir))
     }
