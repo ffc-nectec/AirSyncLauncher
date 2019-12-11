@@ -28,7 +28,8 @@ val runtime: Runtime
 
 fun exec(command: String) = runtime.exec(command)
 
-fun exec(file: File) = runtime.exec("\"${file.absolutePath}\"")
+fun exec(file: File, isPreRelease: Boolean) =
+    runtime.exec("\"${file.absolutePath}\"${if (isPreRelease) " -pre" else ""}")
 
 @Suppress("unused")
 val Runtime.is64bit

@@ -26,6 +26,11 @@ fun cmdCheckAirSyncVersion(): String {
 }
 
 fun cmdLaunchAirSync(): String {
-    return "cmd /k start \"${javawFile.absolutePath}\" -Xms1G -Xmx4G -jar -Dfile.encoding=UTF-8 " +
+    getLogger(javaFile).debug { "Java file ${javaFile.absolutePath}" }
+    getLogger(javawFile).debug { "Java file ${javaFile.absolutePath}" }
+    getLogger(airsyncFile).debug { "Airsync file ${javaFile.absolutePath}" }
+    val command = "cmd /k start \"${javawFile.absolutePath}\" -Xms1G -Xmx4G -jar -Dfile.encoding=UTF-8 " +
         "-jar \"${airsyncFile.absolutePath}\""
+    getLogger(command).info { "Run with command: $command" }
+    return command
 }
