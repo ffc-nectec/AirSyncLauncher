@@ -8,7 +8,7 @@ import java.net.URL
 class JreSetup(airsyncPath: File) {
     private val logger = getLogger(this)
     private val destJre = File(airsyncPath, "jre")
-    private val destTempDir = File(destJre, "tmp")
+    private val destTempDir = File(airsyncPath, "jretmp")
     private val localVersionFile = File(airsyncPath, "jre/jreVersion.txt")
     private val compatVersionFile = File(airsyncPath, "jreVersion.txt")
 
@@ -27,14 +27,6 @@ class JreSetup(airsyncPath: File) {
     fun InstallJre(compatVersion: String) {
         downloadZipAndExtract(compatVersion)
         moveTempToAirsyncJre()
-    }
-
-    fun getJavaPath(): File? {
-        val javaPath = File(destJre, "bin")
-        return if (javaPath.isDirectory)
-            javaPath
-        else
-            null
     }
 
     fun isJavaInstall(): Boolean = File(destJre, "bin/javaw.exe").isFile
@@ -68,6 +60,8 @@ class JreSetup(airsyncPath: File) {
         check(listTemp.isNotEmpty()) { "${destTempDir.absolutePath} is Empty" }
         val subJre = File(destTempDir, listTemp.first())
         logger.debug { "Sub Jre ${subJre.listFiles()?.map { it.name }}}" }
+        destJre.deleteRecursively()
+        destJre.mkdirs()
         subJre.copyRecursively(destJre)
         destTempDir.deleteRecursively()
     }
