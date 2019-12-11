@@ -110,7 +110,10 @@ internal class Launcher constructor(val args: Array<String>) {
         ui.updateProgress(message = "ตรวจสอบเวอร์ชั่น")
         try {
             val localVersion = currentAirSyncVersion()
-            val release = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
+            val release = if (isPreRelease)
+                GitHubLatestApi("ffc-nectec/airsync").getLastPreRelease()!!
+            else
+                GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
 
             if (localVersion != release.tag_name) {
                 ui.text = "ปรับปรุงเวอร์ชั่น"
