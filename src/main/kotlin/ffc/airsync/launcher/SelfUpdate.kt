@@ -58,7 +58,7 @@ class SelfUpdate(dir: File, private val isPreRelease: Boolean) {
     }
 
     fun checkForUpdate() {
-        logger.info { "Check For launcher update." }
+        logger.info { "Check For launcher update. is pre: $isPreRelease" }
         if (newExeFile.exists()) {
             logger.info { "Already download newer version" }
             Thread.sleep(3000) // make sure process was released
@@ -68,7 +68,7 @@ class SelfUpdate(dir: File, private val isPreRelease: Boolean) {
                 exitProcess(0)
             }
         } else {
-            logger.info { "Get new version from file version." }
+            logger.info { "Get new version from file version. is pre: $isPreRelease" }
             try {
                 checkNewVersionFromFileVersion()?.let {
                     // restart to newer version tmp
