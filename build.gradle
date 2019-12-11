@@ -43,7 +43,7 @@ dependencies {
     compile 'com.github.lionants02:check46BitSupport:0.0.1'
     compile 'com.github.lionants02:EasyPrintLogGUI:0.0.2'
     compile 'com.github.lionants02:ZIpDownload:0.0.2'
-    compile 'com.github.lionants02:GitHubLatestApi:0.0.1'
+    compile 'com.github.lionants02:GitHubLatestApi:1.0'
     compile 'com.github.lionants02:WindowsCreateLink:0.0.2'
     compile 'com.github.lionants02:JvmIsAdmin:0.0.1'
     compile 'com.intellij:forms_rt:7.0.3'
@@ -81,7 +81,6 @@ launch4j {
     outfile = "ffc-airsync.exe"
     mainClassName = 'ffc.airsync.launcher.MainKt'
     productName = 'FFC AirSync'
-    manifest = "$projectDir/launch4j.manifest"
     fileDescription = "Launcher for FFC AirSync application"
     version = project.version
     icon = "$projectDir/logo.ico"

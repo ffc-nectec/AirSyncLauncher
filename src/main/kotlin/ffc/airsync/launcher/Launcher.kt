@@ -28,6 +28,7 @@ import kotlin.system.exitProcess
 
 internal class Launcher constructor(val args: Array<String>) {
 
+    private val preRelease = args.contains("-pre")
     private val ui: Ui = SplashScreenFrame()
     private val logger = getLogger(this)
 
@@ -51,7 +52,7 @@ internal class Launcher constructor(val args: Array<String>) {
             }
             checkDuplicateProcess()
             logger.info { "Check launcher update" }
-            SelfUpdate(appFolder).checkForUpdate()
+            SelfUpdate(appFolder, preRelease).checkForUpdate()
             logger.info { "Create startup link." }
             createStartupLink(appFolder)
             logger.info { "Check airsync update." }
@@ -102,7 +103,7 @@ internal class Launcher constructor(val args: Array<String>) {
     private fun checkAirSyncVersion(appDir: File) {
         ui.updateProgress(message = "ตรวจสอบเวอร์ชั่น")
         try {
-            val localVersion = currentAirSyncVersion(appDir)
+            val localVersion = currentAirSyncVersion()
             val release = GitHubLatestApi("ffc-nectec/airsync").getLastRelease()
 
             if (localVersion != release.tag_name) {
@@ -129,7 +130,7 @@ internal class Launcher constructor(val args: Array<String>) {
         }
     }
 
-    private fun currentAirSyncVersion(appDir: File): String {
+    private fun currentAirSyncVersion(): String {
         return try {
             val proc = exec(cmdCheckAirSyncVersion())
             val localVersion = proc.inputStream.reader().readText()
