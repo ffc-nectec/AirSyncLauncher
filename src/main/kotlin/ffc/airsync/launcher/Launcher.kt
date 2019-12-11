@@ -71,6 +71,7 @@ internal class Launcher constructor(val args: Array<String>) {
             ui.dispose()
             exitProcess(0)
         } catch (exception: Throwable) {
+            logger.error(exception.message.toString(), exception)
             exception.printStackTrace()
             ui.dispose()
             JOptionPane.showMessageDialog(
