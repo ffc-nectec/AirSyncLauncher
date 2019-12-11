@@ -28,8 +28,9 @@ import kotlin.system.exitProcess
  * ตรวจสอบการ update airsync โดยจะตรวจสอบ version ล่าสุดให้เอง
  * @param dir ไดเรกทอรี่ ที่จะทำการติดตั้ง airsync
  */
-class SelfUpdate(dir: File, val preRelease: Boolean) {
+class SelfUpdate(dir: File, private val isPreRelease: Boolean) {
 
+    private val logger = getLogger(this)
     private val replaceFlag = File(dir, "replace.flag")
     private val currentVersionFlag = File(dir, "launcher.version")
 
@@ -42,8 +43,9 @@ class SelfUpdate(dir: File, val preRelease: Boolean) {
             newExeFile.delete()
             replaceFlag.delete()
         }
-        if (!exeFile.exists()) { // first time start by installer
-            val release = GitHubLatestApi("ffc-nectec/airsync-launcher").getLastRelease()
+        if (!exeFile.exists()) {
+            logger.info { "First time start by installer." }
+            val release = getLastRelease()
             release.downloadExeFile(exeFile)
             stampCurrentVersion(release.tag_name)
         }
@@ -56,19 +58,21 @@ class SelfUpdate(dir: File, val preRelease: Boolean) {
     }
 
     fun checkForUpdate() {
+        logger.info { "Check For launcher update." }
         if (newExeFile.exists()) {
-            // already download newer version
+            logger.info { "Already download newer version" }
             Thread.sleep(3000) // make sure process was released
             exeFile.replaceWith(newExeFile) {
                 replaceFlag.createNewFile()
-                exec(exeFile)
+                exec(exeFile, isPreRelease)
                 exitProcess(0)
             }
         } else {
+            logger.info { "Get new version from file version." }
             try {
-                getNewerVersion()?.let {
+                checkNewVersionFromFileVersion()?.let {
                     // restart to newer version tmp
-                    exec(it)
+                    exec(it, isPreRelease)
                     exitProcess(0)
                 }
             } catch (ignore: Throwable) {
@@ -84,17 +88,21 @@ class SelfUpdate(dir: File, val preRelease: Boolean) {
         onFinish()
     }
 
-    private fun getNewerVersion(): File? {
+    private fun checkNewVersionFromFileVersion(): File? {
         val currentVersion = currentVersionFlag.readText()
-        val release = if (preRelease)
-            GitHubLatestApi("ffc-nectec/airsync-launcher").getLastPreRelease()!!
-        else
-            GitHubLatestApi("ffc-nectec/airsync-launcher").getLastRelease()
+        val release = getLastRelease()
         if (release.tag_name != currentVersion) {
             release.downloadExeFile(newExeFile)
             return newExeFile
         }
         return null
+    }
+
+    private fun getLastRelease(): GithubRelease {
+        return if (isPreRelease)
+            GitHubLatestApi("ffc-nectec/airsync-launcher").getLastPreRelease()!!
+        else
+            GitHubLatestApi("ffc-nectec/airsync-launcher").getLastRelease()
     }
 
     private fun GithubRelease.downloadExeFile(dest: File) {
