@@ -28,7 +28,7 @@ import kotlin.system.exitProcess
  * ตรวจสอบการ update airsync โดยจะตรวจสอบ version ล่าสุดให้เอง
  * @param dir ไดเรกทอรี่ ที่จะทำการติดตั้ง airsync
  */
-class SelfUpdate(dir: File) {
+class SelfUpdate(dir: File, val preRelease: Boolean) {
 
     private val replaceFlag = File(dir, "replace.flag")
     private val currentVersionFlag = File(dir, "launcher.version")
@@ -86,7 +86,10 @@ class SelfUpdate(dir: File) {
 
     private fun getNewerVersion(): File? {
         val currentVersion = currentVersionFlag.readText()
-        val release = GitHubLatestApi("ffc-nectec/airsync-launcher").getLastRelease()
+        val release = if (preRelease)
+            GitHubLatestApi("ffc-nectec/airsync-launcher").getLastPreRelease()!!
+        else
+            GitHubLatestApi("ffc-nectec/airsync-launcher").getLastRelease()
         if (release.tag_name != currentVersion) {
             release.downloadExeFile(newExeFile)
             return newExeFile
