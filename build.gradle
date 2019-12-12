@@ -84,7 +84,7 @@ launch4j {
     fileDescription = "Launcher for FFC AirSync application"
     version = project.version
     icon = "$projectDir/logo.ico"
-    jreRuntimeBits = '64'
+    jreRuntimeBits = '64/32'
     companyName = "NSTDA"
     language = "THAI"
     trademarks = "FFC AirSync"
@@ -99,7 +99,7 @@ task createInstaller(type: edu.sc.seis.launch4j.tasks.Launch4jLibraryTask) {
     manifest = "$projectDir/launch4j.manifest"
     version = project.version
     companyName = "NSTDA"
-    jreRuntimeBits = '64'
+    jreRuntimeBits = '64/32'
     language = "THAI"
     trademarks = "FFC AirSync"
     copyright = "Apache License 2.0"
