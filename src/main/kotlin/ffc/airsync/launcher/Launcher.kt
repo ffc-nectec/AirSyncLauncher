@@ -34,6 +34,15 @@ internal class Launcher constructor(val args: Array<String>) {
 
     fun run() {
         try {
+            if (!is64BitCpu) {
+                JOptionPane.showMessageDialog(
+                    null,
+                    "จำเป็นต้องใช้งานบนเครื่อง x64 เท่านั้น",
+                    "x64 not support",
+                    JOptionPane.ERROR_MESSAGE
+                )
+                exitProcess(1)
+            }
             ui.show()
             ui.text = "ตรวจสอบสถานะ..."
             logger.info { "Setup FFC_HOME" }
