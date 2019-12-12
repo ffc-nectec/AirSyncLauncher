@@ -35,12 +35,7 @@ internal class Launcher constructor(val args: Array<String>) {
     fun run() {
         try {
             if (!is64BitCpu) {
-                JOptionPane.showMessageDialog(
-                    null,
-                    "จำเป็นต้องใช้งานบนเครื่อง x64 เท่านั้น",
-                    "x64 not support",
-                    JOptionPane.ERROR_MESSAGE
-                )
+                showNotSupport32BitDialog()
                 exitProcess(1)
             }
             ui.show()
@@ -91,6 +86,15 @@ internal class Launcher constructor(val args: Array<String>) {
             )
             exitProcess(500)
         }
+    }
+
+    private fun showNotSupport32BitDialog() {
+        JOptionPane.showMessageDialog(
+            null,
+            "จำเป็นต้องใช้งานบนเครื่อง x64 เท่านั้น",
+            "x64 not support",
+            JOptionPane.ERROR_MESSAGE
+        )
     }
 
     private fun checkDuplicateProcess() {

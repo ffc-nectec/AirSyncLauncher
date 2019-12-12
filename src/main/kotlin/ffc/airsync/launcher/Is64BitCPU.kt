@@ -1,3 +1,8 @@
 package ffc.airsync.launcher
 
-val is64BitCpu: Boolean = System.getProperty("os.arch").endsWith("64")
+val is64BitCpu: Boolean
+    get() {
+        val property = System.getProperty("os.arch")
+        getLogger(Launcher::class).info { "OS Arch is $property" }
+        return property.endsWith("64")
+    }
