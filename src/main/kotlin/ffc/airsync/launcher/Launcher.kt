@@ -34,10 +34,10 @@ internal class Launcher constructor(val args: Array<String>) {
 
     fun run() {
         try {
-            if (!is64BitCpu) {
+            /*if (!is64BitCpu) {
                 showNotSupport32BitDialog()
                 exitProcess(1)
-            }
+            }*/
             ui.show()
             ui.text = "ตรวจสอบสถานะ..."
             logger.info { "Setup FFC_HOME" }
